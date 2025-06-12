@@ -7,29 +7,20 @@ struct MainScreen: View {
     var body: some View {
         VStack(spacing: 24) {
             
-            // Заголовок
-            Text("Воспоминания")
-                .font(.system(size: 28, weight: .semibold))
+            Text("Привет, Масик! 💕")
+                .font(.largeTitle)
+                .fontWeight(.bold)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal)
+
+            Text("Вот твои воспоминания:")
+                .font(.title2)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal)
+
+            RandomPhotoView()
             
-            // Лента воспоминаний (заглушка)
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 16) {
-                    ForEach(0..<5) { index in
-                        RoundedRectangle(cornerRadius: 20)
-                            .fill(Color.white)
-                            .frame(width: 200, height: 300)
-                            .shadow(radius: 3)
-                            .overlay(
-                                Text("Фото \(index + 1)")
-                                    .foregroundColor(.gray)
-                            )
-                    }
-                }.padding(.horizontal)
-            }
-            
-            // Боковое меню хотелок
+            // Хотелки
             VStack(alignment: .leading, spacing: 16) {
                 Text("Хотелки")
                     .font(.headline)

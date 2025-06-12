@@ -10,6 +10,15 @@ import SwiftUI
 struct WishlistScreen: View {
     
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack(spacing: 24) {
+            
+            // Заголовок
+            Text("Вишлист")
+                .font(.system(size: 28, weight: .semibold))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal)
+            
+            Spacer()
+        }
     }
 }
