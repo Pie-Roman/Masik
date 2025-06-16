@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct WishlistScreen: View {
-    
+struct WishlistView: View {
+
     var body: some View {
         VStack(spacing: 24) {
             

@@ -1,7 +1,7 @@
 import SwiftUI
 
-struct MainScreen: View {
-    
+struct MainView: View {
+
     @State private var showTaxiScreen = false
     
     var body: some View {
@@ -27,7 +27,7 @@ struct MainScreen: View {
                     .padding(.horizontal)
                 
                 VStack(spacing: 12) {
-                    NavigationLink(destination: OrderTaxiScreen(), isActive: $showTaxiScreen) {
+                    NavigationLink(destination: OrderTaxiView(), isActive: $showTaxiScreen) {
                         Button(action: {
                             showTaxiScreen = true
                         }) {

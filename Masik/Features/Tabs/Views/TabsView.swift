@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct TabsScreen: View {
+struct TabsView: View {
 
     init() {
         UITabBar.appearance().isTranslucent = true
@@ -20,8 +20,9 @@ struct TabsScreen: View {
 
     var body: some View {
         let views: [Tab: AnyView] = [
-            .main: AnyView(MainScreen()),
-            .wishlist: AnyView(WishlistScreen())
+            .main: AnyView(MainView()),
+            .notelist: AnyView(NoteListView()),
+            .wishlist: AnyView(WishlistView())
         ]
 
         NavigationView {
@@ -67,6 +68,18 @@ struct TabsScreen: View {
                         Spacer()
                         Button(action: {
                             withAnimation(.easeInOut) {
+                                selectedTab = .notelist
+                            }
+                        }) {
+                            VStack {
+                                Image(systemName: "list.bullet")
+                                Text("Что сделать")
+                            }
+                            .foregroundColor(selectedTab == .notelist ? .pink : .gray)
+                        }
+                        Spacer()
+                        Button(action: {
+                            withAnimation(.easeInOut) {
                                 selectedTab = .wishlist
                             }
                         }) {
@@ -89,12 +102,14 @@ struct TabsScreen: View {
 
 private enum Tab: CaseIterable {
     case main
+    case notelist
     case wishlist
 
     var index: Int {
         switch self {
         case .main: return 0
-        case .wishlist: return 1
+        case .notelist: return 1
+        case .wishlist: return 2
         }
     }
 

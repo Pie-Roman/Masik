@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct OrderTaxiScreen: View {
+struct OrderTaxiView: View {
     @State private var fromAddress = ""
     @State private var toAddress = ""
     @State private var savedAddresses = ["Дом", "Работа", "Кафе на Арбате"]
@@ -70,5 +70,5 @@ struct OrderTaxiScreen: View {
 
 
 #Preview {
-    OrderTaxiScreen()
+    OrderTaxiView()
 }
