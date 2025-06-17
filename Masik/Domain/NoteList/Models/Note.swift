@@ -7,9 +7,7 @@
 
 import Foundation
 
-struct Note: Identifiable, Codable {
-    var id = UUID()
-    var title: String
-    var isDone: Bool = false
-    var dateCreated: Date = Date()
+struct Note: Identifiable {
+    let id: String
+    let body: NoteBody
 }

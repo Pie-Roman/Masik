@@ -6,22 +6,23 @@
 //
 
 import SwiftUI
+import Foundation
 
-class NotesListViewModel: ObservableObject {
-    @Published var notes: [Note] = []
+@MainActor
+final class NoteListViewModel: ObservableObject {
+    @Published private(set) var state: NoteListState = .idle
+    private let processor: NoteListProcessor
+    private var isFirstLoad = true
 
-    func addNote(title: String) {
-        let newNote = Note(title: title)
-        notes.append(newNote)
+    init(interactor: NoteListInteractable = NoteListInteractor()) {
+        self.processor = NoteListProcessor(interactor: interactor)
+        send(.load)
     }
 
-    func toggleDone(note: Note) {
-        if let index = notes.firstIndex(where: { $0.id == note.id }) {
-            notes[index].isDone.toggle()
+    func send(_ intent: NoteListIntent) {
+        Task {
+            let newState = await processor.process(currentState: state, intent: intent)
+            state = newState
         }
-    }
-
-    func removeNote(at offsets: IndexSet) {
-        notes.remove(atOffsets: offsets)
     }
 }

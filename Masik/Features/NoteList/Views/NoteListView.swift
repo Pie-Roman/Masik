@@ -8,71 +8,129 @@
 import SwiftUI
 
 struct NoteListView: View {
-    @StateObject private var viewModel = NotesListViewModel()
+    @StateObject private var viewModel = NoteListViewModel()
     @State private var showingAdd = false
+    @State private var newNoteTitle = ""
+    @State private var isFirstAppear = true
 
     var body: some View {
         NavigationView {
-            List {
-                ForEach(viewModel.notes) { note in
-                    HStack {
-                        Image(systemName: note.isDone ? "checkmark.circle.fill" : "circle")
-                            .onTapGesture {
-                                viewModel.toggleDone(note: note)
+            Group {
+                switch viewModel.state {
+                case .idle:
+                    Color.clear
+                        .onAppear {
+                            if isFirstAppear {
+                                isFirstAppear = false
+                                viewModel.send(.load)
                             }
-                        Text(note.title)
-                            .strikethrough(note.isDone)
+                        }
+
+                case .loading:
+                    VStack {
                         Spacer()
-                        Text(note.dateCreated, style: .date)
-                            .font(.caption2)
-                            .foregroundColor(.gray)
+                        ProgressView()
+                        Spacer()
+                    }
+
+                case .loaded(let noteList):
+                    if noteList.items.isEmpty {
+                        VStack(spacing: 24) {
+                            Spacer()
+                            Text("Список дел пуст")
+                                .foregroundColor(.gray)
+                                .font(.title3)
+                            Spacer()
+                        }
+                    } else {
+                        List {
+                            ForEach(noteList.items) { note in
+                                HStack {
+                                    Image(systemName: note.body.isDone ? "checkmark.circle.fill" : "circle")
+                                        .onTapGesture {
+                                            viewModel.send(.toggleDone(id: note.id, isDone: !note.body.isDone))
+                                        }
+                                    Text(note.body.title)
+                                        .strikethrough(note.body.isDone)
+                                    Spacer()
+                                }
+                            }
+                            .onDelete { indexSet in
+                                for index in indexSet {
+                                    if case let .loaded(noteList) = viewModel.state {
+                                        let items = noteList.items
+                                        if items.indices.contains(index) {
+                                            let id = items[index].id
+                                            viewModel.send(.delete(id: id))
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                case .error(let message):
+                    VStack(spacing: 16) {
+                        Spacer()
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .resizable()
+                            .frame(width: 48, height: 48)
+                            .foregroundColor(.red)
+                        Text("Ошибка")
+                            .font(.title2)
+                        Text(message)
+                            .foregroundColor(.red)
+                        Button("Попробовать снова") {
+                            viewModel.send(.load)
+                        }
+                        Spacer()
                     }
                 }
-                .onDelete(perform: viewModel.removeNote)
             }
             .navigationTitle("Что надо сделать")
             .toolbar {
-                Button {
-                    showingAdd = true
-                } label: {
-                    Image(systemName: "plus")
+                if case .loaded = viewModel.state {
+                    Button {
+                        showingAdd = true
+                    } label: {
+                        Image(systemName: "plus")
+                    }
                 }
             }
             .sheet(isPresented: $showingAdd) {
-                AddNoteView { title in
-                    if !title.isEmpty {
-                        viewModel.addNote(title: title)
+                NavigationView {
+                    Form {
+                        TextField("Заметка", text: $newNoteTitle)
                     }
-                    showingAdd = false
+                    .navigationTitle("Добавить дело")
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Отмена") {
+                                showingAdd = false
+                                newNoteTitle = ""
+                            }
+                        }
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button("Сохранить") {
+                                if !newNoteTitle.isEmpty {
+                                    let body = NoteBody(title: newNoteTitle, isDone: false)
+                                    viewModel.send(.add(body: body))
+                                    showingAdd = false
+                                    newNoteTitle = ""
+                                }
+                            }
+                            .disabled(newNoteTitle.isEmpty)
+                        }
+                    }
                 }
             }
         }
     }
-}
 
-struct AddNoteView: View {
-    @State private var title = ""
-    var onSave: (String) -> Void
-
-    var body: some View {
-        NavigationView {
-            Form {
-                TextField("Заметка", text: $title)
-            }
-            .navigationTitle("Добавить дело")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Отмена") {
-                        onSave("")
-                    }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Сохранить") {
-                        onSave(title)
-                    }
-                    .disabled(title.isEmpty)
-                }
-            }
-        }
+    private func formatDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
     }
 }
