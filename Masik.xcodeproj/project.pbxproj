@@ -10,9 +10,22 @@
 		68B21BD92DF5E41500F791DA /* Masik.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Masik.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		37F4EEC42E03213C008DAD1F /* Exceptions for "Masik" folder in "Masik" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 68B21BD82DF5E41500F791DA /* Masik */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		68B21BDB2DF5E41500F791DA /* Masik */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				37F4EEC42E03213C008DAD1F /* Exceptions for "Masik" folder in "Masik" target */,
+			);
 			path = Masik;
 			sourceTree = "<group>";
 		};
@@ -254,6 +267,7 @@
 				DEVELOPMENT_TEAM = 7JCTFR9C8T;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Masik/Info.plist;
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Приложению нужен доступ к фото, чтобы показывать воспоминания";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -283,6 +297,7 @@
 				DEVELOPMENT_TEAM = 7JCTFR9C8T;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Masik/Info.plist;
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Приложению нужен доступ к фото, чтобы показывать воспоминания";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

@@ -11,7 +11,7 @@ class NoteListNetworkWorker {
 
     static let shared = NoteListNetworkWorker()
 
-    private let baseURL = "http://localhost:8080/notes" // замени на свой сервер при деплое
+    private let baseURL = "http://5.129.199.178:8080/notes" // замени на свой сервер при деплое
 
     private let decoder: JSONDecoder = {
         let decoder = JSONDecoder()
