@@ -14,7 +14,7 @@ final class NoteListViewModel: ObservableObject {
     private let processor: NoteListProcessor
     private var isFirstLoad = true
 
-    init(interactor: NoteListInteractable = NoteListInteractor()) {
+    init(interactor: NoteListInteractor = NoteListInteractor()) {
         self.processor = NoteListProcessor(interactor: interactor)
         send(.load)
     }

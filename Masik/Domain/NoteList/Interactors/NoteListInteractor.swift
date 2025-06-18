@@ -5,18 +5,7 @@
 //  Created by Roman Lomtev on 17.06.2025.
 //
 
-protocol NoteListInteractable {
-
-    func loadNotes() async throws -> NoteList
-
-    func addNote(noteBody: NoteBody) async throws -> Note
-
-    func deleteNote(id: String) async throws
-
-    func toggleDone(id: String, isDone: Bool) async throws -> Note
-}
-
-class NoteListInteractor: NoteListInteractable {
+class NoteListInteractor {
 
     private let worker = NoteListNetworkWorker()
 
