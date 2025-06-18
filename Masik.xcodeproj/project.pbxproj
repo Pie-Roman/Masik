@@ -6,7 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		37F4EEC62E032592008DAD1F /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 37F4EEC52E032592008DAD1F /* .gitignore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		37F4EEC52E032592008DAD1F /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		68B21BD92DF5E41500F791DA /* Masik.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Masik.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -45,6 +50,7 @@
 		68B21BD02DF5E41500F791DA = {
 			isa = PBXGroup;
 			children = (
+				37F4EEC52E032592008DAD1F /* .gitignore */,
 				68B21BDB2DF5E41500F791DA /* Masik */,
 				68B21BDA2DF5E41500F791DA /* Products */,
 			);
@@ -122,6 +128,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37F4EEC62E032592008DAD1F /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
