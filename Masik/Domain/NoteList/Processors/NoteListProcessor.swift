@@ -8,9 +8,9 @@
 import Foundation
 
 final class NoteListProcessor {
-    private let interactor: NoteListInteractable
+    private let interactor: NoteListInteractor
 
-    init(interactor: NoteListInteractable) {
+    init(interactor: NoteListInteractor) {
         self.interactor = interactor
     }
 
