@@ -51,7 +51,7 @@ final class NoteListProcessor {
             }
             do {
                 let updatedNote = try await interactor.toggleDone(id: id, isDone: isDone)
-                let updatedItems = currentList.items.map { $0.id == id ? updatedNote : $0 }
+                let updatedItems = currentList.items.map { $0.id == id ? updatedNote ?? $0 : $0 }
                 return .loaded(NoteList(items: updatedItems))
             } catch {
                 return .error(error.localizedDescription)

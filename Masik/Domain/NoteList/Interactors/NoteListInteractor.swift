@@ -21,7 +21,7 @@ class NoteListInteractor {
         try await worker.delete(id: id)
     }
 
-    func toggleDone(id: String, isDone: Bool) async throws -> Note {
-        try await worker.updateIsDone(id: id, isDone: isDone)
+    func toggleDone(id: String, isDone: Bool) async throws -> Note? {
+        try? await worker.updateIsDone(id: id, isDone: isDone)
     }
 }
