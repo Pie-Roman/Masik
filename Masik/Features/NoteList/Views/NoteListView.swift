@@ -1,10 +1,3 @@
-//
-//  NoteListView.swift
-//  Masik
-//
-//  Created by Roman Lomtev on 17.06.2025.
-//
-
 import SwiftUI
 
 struct NoteListView: View {
@@ -43,29 +36,28 @@ struct NoteListView: View {
                             Spacer()
                         }
                     } else {
-                        List {
-                            ForEach(noteList.items) { note in
-                                HStack {
-                                    Image(systemName: note.body.isDone ? "checkmark.circle.fill" : "circle")
-                                        .onTapGesture {
+                        ScrollView {
+                            HStack(alignment: .top, spacing: 12) {
+                                // Левая колонка
+                                VStack(spacing: 12) {
+                                    ForEach(noteList.items.enumerated().filter { $0.offset % 2 == 0 }, id: \.element.id) { index, note in
+                                        NoteCard(note: note, heightOffset: index % 3) {
                                             viewModel.send(.toggleDone(id: note.id, isDone: !note.body.isDone))
                                         }
-                                    Text(note.body.title)
-                                        .strikethrough(note.body.isDone)
-                                    Spacer()
+                                    }
                                 }
-                            }
-                            .onDelete { indexSet in
-                                for index in indexSet {
-                                    if case let .loaded(noteList) = viewModel.state {
-                                        let items = noteList.items
-                                        if items.indices.contains(index) {
-                                            let id = items[index].id
-                                            viewModel.send(.delete(id: id))
+
+                                // Правая колонка
+                                VStack(spacing: 12) {
+                                    ForEach(noteList.items.enumerated().filter { $0.offset % 2 != 0 }, id: \.element.id) { index, note in
+                                        NoteCard(note: note, heightOffset: index % 3) {
+                                            viewModel.send(.toggleDone(id: note.id, isDone: !note.body.isDone))
                                         }
                                     }
                                 }
                             }
+                            .padding(.horizontal)
+                            .padding(.top)
                         }
                     }
 
@@ -127,10 +119,50 @@ struct NoteListView: View {
         }
     }
 
-    private func formatDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .short
-        formatter.timeStyle = .short
-        return formatter.string(from: date)
+    private func randomSoftColor() -> Color {
+        let colors: [Color] = [
+            Color(red: 0.93, green: 0.90, blue: 1.0), // soft purple
+            Color(red: 1.0, green: 0.93, blue: 0.95), // soft pink
+            Color(red: 1.0, green: 0.97, blue: 0.90), // soft orange
+            Color(red: 0.90, green: 1.0, blue: 0.95), // mint
+            Color(red: 1.0, green: 0.98, blue: 0.85), // soft yellow
+            Color(red: 0.85, green: 0.95, blue: 1.0)  // light blue
+        ]
+        return colors.randomElement() ?? .gray
+    }
+}
+
+struct NoteCard: View {
+    let note: Note
+    let heightOffset: Int
+    var onTap: () -> Void
+
+    var body: some View {
+        Text(note.body.title)
+            .font(.headline)
+            .foregroundColor(.black)
+            .padding()
+            .frame(
+                maxWidth: .infinity,
+                minHeight: CGFloat(120 + heightOffset * 40),
+                alignment: .bottomLeading
+            )
+            .background(randomSoftColor())
+            .cornerRadius(24)
+            .onTapGesture {
+                onTap()
+            }
+    }
+
+    private func randomSoftColor() -> Color {
+        let colors: [Color] = [
+            Color(red: 0.93, green: 0.90, blue: 1.0),
+            Color(red: 1.0, green: 0.93, blue: 0.95),
+            Color(red: 1.0, green: 0.97, blue: 0.90),
+            Color(red: 0.90, green: 1.0, blue: 0.95),
+            Color(red: 1.0, green: 0.98, blue: 0.85),
+            Color(red: 0.85, green: 0.95, blue: 1.0)
+        ]
+        return colors.randomElement() ?? .gray
     }
 }
