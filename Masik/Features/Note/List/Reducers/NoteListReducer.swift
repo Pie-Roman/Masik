@@ -7,7 +7,10 @@
 
 import Foundation
 
-class NoteListReducer {
+class NoteListReducer: Reducer {
+    
+    typealias State = NoteListState
+    typealias Intent = NoteListIntent
     
     func reduce(currentState: NoteListState, intent: NoteListIntent) -> NoteListState {
         switch intent {

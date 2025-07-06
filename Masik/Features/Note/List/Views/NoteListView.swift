@@ -92,19 +92,18 @@ struct NoteListView: View {
         } else {
             ScrollView {
                 HStack(alignment: .top, spacing: 12) {
-                    // Левая колонка
+
                     VStack(spacing: 12) {
                         ForEach(noteList.items.enumerated().filter { $0.offset % 2 == 0 }, id: \.element.id) { index, note in
-                            NoteCard(note: note, heightOffset: index % 3) {
+                            NoteView(note: note, heightOffset: index % 3) {
                                 viewModel.send(intent: .toggleDone(id: note.id, isDone: !note.body.isDone))
                             }
                         }
                     }
 
-                    // Правая колонка
                     VStack(spacing: 12) {
                         ForEach(noteList.items.enumerated().filter { $0.offset % 2 != 0 }, id: \.element.id) { index, note in
-                            NoteCard(note: note, heightOffset: index % 3) {
+                            NoteView(note: note, heightOffset: index % 3) {
                                 viewModel.send(intent: .toggleDone(id: note.id, isDone: !note.body.isDone))
                             }
                         }

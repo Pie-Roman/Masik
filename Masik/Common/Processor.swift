@@ -9,5 +9,5 @@ protocol Processor {
     
     associatedtype Intent
     
-    func process(intent: NoteListIntent)
+    func process(intent: Intent)
 }

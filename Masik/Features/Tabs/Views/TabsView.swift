@@ -7,113 +7,71 @@
 
 import SwiftUI
 
+import SwiftUI
+
 struct TabsView: View {
-
-    init() {
-        UITabBar.appearance().isTranslucent = true
-        UITabBar.appearance().backgroundColor = UIColor.white.withAlphaComponent(0.9)
-        UITabBar.appearance().unselectedItemTintColor = UIColor.systemGray
-    }
-
+    
     @State private var selectedTab: Tab = .main
-    @GestureState private var dragOffset: CGFloat = 0
-
+    private let tabBarWidth: CGFloat = 200
+    private let tabItemWidth: CGFloat = 60
+    
     var body: some View {
-        let views: [Tab: AnyView] = [
-            .main: AnyView(MainView()),
-            .notelist: AnyView(NoteListView()),
-            .wishlist: AnyView(WishlistView())
-        ]
-
-        NavigationView {
-            ZStack {
-                Color(.systemGray6).edgesIgnoringSafeArea(.all)
-
-                VStack {
-                    TabView(selection: $selectedTab) {
-                        ForEach(Tab.allCases, id: \ .self) { tab in
-                            views[tab]
-                                .tag(tab)
-                        }
-                    }
-                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                    .gesture(DragGesture().updating($dragOffset, body: { value, state, _ in
-                        state = value.translation.width
-                    }).onEnded { value in
-                        if value.translation.width < -50, let nextTab = Tab.tab(at: selectedTab.index + 1) {
-                            withAnimation(.easeInOut) {
-                                selectedTab = nextTab
-                            }
-                        }
-                        if value.translation.width > 50, let previousTab = Tab.tab(at: selectedTab.index - 1) {
-                            withAnimation(.easeInOut) {
-                                selectedTab = previousTab
-                            }
-                        }
-                    })
-
-                    HStack {
-                        Spacer()
-                        Button(action: {
-                            withAnimation(.easeInOut) {
-                                selectedTab = .main
-                            }
-                        }) {
-                            VStack {
-                                Image(systemName: "house.fill")
-                                Text("Главная")
-                            }
-                            .foregroundColor(selectedTab == .main ? .pink : .gray)
-                        }
-                        Spacer()
-                        Button(action: {
-                            withAnimation(.easeInOut) {
-                                selectedTab = .notelist
-                            }
-                        }) {
-                            VStack {
-                                Image(systemName: "list.bullet")
-                                Text("Что сделать")
-                            }
-                            .foregroundColor(selectedTab == .notelist ? .pink : .gray)
-                        }
-                        Spacer()
-                        Button(action: {
-                            withAnimation(.easeInOut) {
-                                selectedTab = .wishlist
-                            }
-                        }) {
-                            VStack {
-                                Image(systemName: "heart.fill")
-                                Text("Вишлист")
-                            }
-                            .foregroundColor(selectedTab == .wishlist ? .pink : .gray)
-                        }
-                        Spacer()
-                    }
-                    .padding(.top, 6)
-                    .padding(.bottom, 12)
-                    .background(Color.white.opacity(0.9).ignoresSafeArea(edges: .bottom))
+        ZStack(alignment: .bottom) {
+            Group {
+                switch selectedTab {
+                case .main: MainView()
+                case .notes: NoteListView()
+                case .wishlist: WishlistView()
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            
+            HStack(spacing: 0) {
+                ForEach(Tab.allCases, id: \.self) { tab in
+                    Button(action: {
+                        withAnimation(.interactiveSpring(response: 0.25, dampingFraction: 0.7)) {
+                            selectedTab = tab
+                        }
+                    }) {
+                        VStack(spacing: 6) {
+                            Image(systemName: tab.icon)
+                                .font(.system(size: 20, weight: .medium))
+                                .frame(width: 24, height: 24)
+                            
+                            Circle()
+                                .fill(selectedTab == tab ? Color.white : Color.clear)
+                                .frame(width: 4, height: 4)
+                        }
+                        .frame(width: tabItemWidth, height: 44)
+                        .contentShape(Rectangle())
+                    }
+                    .foregroundColor(selectedTab == tab ? .white : Color(white: 0.75))
+                }
+            }
+            .padding(.horizontal, 10)
+            .padding(.top, 12)
+            .padding(.bottom, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 32)
+                    .fill(Color.black.opacity(0.95))
+                    .shadow(color: .black.opacity(0.25), radius: 12, x: 0, y: 4)
+            )
+            .frame(width: tabBarWidth, height: 60)
+            .padding(.bottom, 48)
+            .compositingGroup()
         }
+        .ignoresSafeArea(.container, edges: .bottom)
     }
 }
 
-private enum Tab: CaseIterable {
-    case main
-    case notelist
-    case wishlist
-
-    var index: Int {
+private enum Tab: Int, CaseIterable {
+    case main, notes, wishlist
+    
+    var icon: String {
         switch self {
-        case .main: return 0
-        case .notelist: return 1
-        case .wishlist: return 2
+        case .main: return "house.fill"
+        case .notes: return "list.bullet"
+        case .wishlist: return "heart.fill"
         }
-    }
-
-    static func tab(at index: Int) -> Tab? {
-        return Self.allCases.first { $0.index == index }
     }
 }
