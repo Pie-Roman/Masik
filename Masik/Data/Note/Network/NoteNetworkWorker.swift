@@ -7,9 +7,9 @@
 
 import Foundation
 
-class NoteListNetworkWorker {
+class NoteNetworkWorker {
 
-    static let shared = NoteListNetworkWorker()
+    static let shared = NoteNetworkWorker()
 
     private let baseURL = "http://89.169.182.244:8080/notes" // замени на свой сервер при деплое
 

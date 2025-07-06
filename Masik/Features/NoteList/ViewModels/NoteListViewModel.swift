@@ -32,7 +32,10 @@ final class NoteListViewModel: ObservableObject {
 extension NoteListViewModel: NoteListHandler {
     
     func handle(intent: NoteListIntent) {
-        let newState = reducer.reduce(currentState: state, intent: intent)
-        self.state = newState
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            let newState = self.reducer.reduce(currentState: state, intent: intent)
+            self.state = newState
+        }
     }
 }

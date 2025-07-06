@@ -7,7 +7,7 @@
 
 class NoteListInteractor {
 
-    private let worker = NoteListNetworkWorker()
+    private let worker = NoteNetworkWorker()
 
     func loadNoteList() async throws -> NoteList {
         try await worker.fetchAll()
