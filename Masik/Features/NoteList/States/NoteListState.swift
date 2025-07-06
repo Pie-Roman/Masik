@@ -7,7 +7,7 @@
 
 enum NoteListState {
     case idle
-    case loading
+    case loading(NoteList)
     case loaded(NoteList)
     case error(String)
 }

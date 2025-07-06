@@ -8,21 +8,31 @@
 import SwiftUI
 import Foundation
 
-@MainActor
 final class NoteListViewModel: ObservableObject {
+    
     @Published private(set) var state: NoteListState = .idle
+    
     private let processor: NoteListProcessor
-    private var isFirstLoad = true
+    private let reducer: NoteListReducer
 
-    init(interactor: NoteListInteractor = NoteListInteractor()) {
+    init(
+        interactor: NoteListInteractor = NoteListInteractor(),
+        reducer: NoteListReducer = NoteListReducer()
+    ) {
         self.processor = NoteListProcessor(interactor: interactor)
-        send(.load)
+        self.reducer = reducer
+        self.processor.handler = self
     }
+    
+    func send(intent: Intent) {
+        processor.process(intent: intent)
+    }
+}
 
-    func send(_ intent: NoteListIntent) {
-        Task {
-            let newState = await processor.process(currentState: state, intent: intent)
-            state = newState
-        }
+extension NoteListViewModel: NoteListHandler {
+    
+    func handle(intent: NoteListIntent) {
+        let newState = reducer.reduce(currentState: state, intent: intent)
+        self.state = newState
     }
 }

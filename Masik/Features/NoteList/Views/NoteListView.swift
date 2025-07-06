@@ -11,72 +11,16 @@ struct NoteListView: View {
             Group {
                 switch viewModel.state {
                 case .idle:
-                    Color.clear
-                        .onAppear {
-                            if isFirstAppear {
-                                isFirstAppear = false
-                                viewModel.send(.load)
-                            }
-                        }
+                    idleView()
 
                 case .loading:
-                    VStack {
-                        Spacer()
-                        ProgressView()
-                        Spacer()
-                    }
+                    loadingView()
 
                 case .loaded(let noteList):
-                    if noteList.items.isEmpty {
-                        VStack(spacing: 24) {
-                            Spacer()
-                            Text("Список дел пуст")
-                                .foregroundColor(.gray)
-                                .font(.title3)
-                            Spacer()
-                        }
-                    } else {
-                        ScrollView {
-                            HStack(alignment: .top, spacing: 12) {
-                                // Левая колонка
-                                VStack(spacing: 12) {
-                                    ForEach(noteList.items.enumerated().filter { $0.offset % 2 == 0 }, id: \.element.id) { index, note in
-                                        NoteCard(note: note, heightOffset: index % 3) {
-                                            viewModel.send(.toggleDone(id: note.id, isDone: !note.body.isDone))
-                                        }
-                                    }
-                                }
-
-                                // Правая колонка
-                                VStack(spacing: 12) {
-                                    ForEach(noteList.items.enumerated().filter { $0.offset % 2 != 0 }, id: \.element.id) { index, note in
-                                        NoteCard(note: note, heightOffset: index % 3) {
-                                            viewModel.send(.toggleDone(id: note.id, isDone: !note.body.isDone))
-                                        }
-                                    }
-                                }
-                            }
-                            .padding(.horizontal)
-                            .padding(.top)
-                        }
-                    }
+                    loadedView(noteList)
 
                 case .error(let message):
-                    VStack(spacing: 16) {
-                        Spacer()
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .resizable()
-                            .frame(width: 48, height: 48)
-                            .foregroundColor(.red)
-                        Text("Ошибка")
-                            .font(.title2)
-                        Text(message)
-                            .foregroundColor(.red)
-                        Button("Попробовать снова") {
-                            viewModel.send(.load)
-                        }
-                        Spacer()
-                    }
+                    errorView(message)
                 }
             }
             .navigationTitle("Что надо сделать")
@@ -106,7 +50,7 @@ struct NoteListView: View {
                             Button("Сохранить") {
                                 if !newNoteTitle.isEmpty {
                                     let body = NoteBody(title: newNoteTitle, isDone: false)
-                                    viewModel.send(.add(body: body))
+                                    viewModel.send(intent: .add(body: body))
                                     showingAdd = false
                                     newNoteTitle = ""
                                 }
@@ -116,6 +60,79 @@ struct NoteListView: View {
                     }
                 }
             }
+        }
+    }
+    
+    @ViewBuilder
+    private func idleView() -> some View {
+        Color.clear
+            .onAppear {
+                viewModel.send(intent: .load)
+            }
+    }
+    
+    @ViewBuilder
+    private func loadingView() -> some View {
+        VStack {
+            Spacer()
+            ProgressView()
+            Spacer()
+        }
+    }
+    
+    @ViewBuilder
+    private func loadedView(_ noteList: NoteList) -> some View {
+        if noteList.items.isEmpty {
+            VStack(spacing: 24) {
+                Spacer()
+                Text("Список дел пуст")
+                    .foregroundColor(.gray)
+                    .font(.title3)
+                Spacer()
+            }
+        } else {
+            ScrollView {
+                HStack(alignment: .top, spacing: 12) {
+                    // Левая колонка
+                    VStack(spacing: 12) {
+                        ForEach(noteList.items.enumerated().filter { $0.offset % 2 == 0 }, id: \.element.id) { index, note in
+                            NoteCard(note: note, heightOffset: index % 3) {
+                                viewModel.send(intent: .toggleDone(id: note.id, isDone: !note.body.isDone))
+                            }
+                        }
+                    }
+
+                    // Правая колонка
+                    VStack(spacing: 12) {
+                        ForEach(noteList.items.enumerated().filter { $0.offset % 2 != 0 }, id: \.element.id) { index, note in
+                            NoteCard(note: note, heightOffset: index % 3) {
+                                viewModel.send(intent: .toggleDone(id: note.id, isDone: !note.body.isDone))
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.top)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func errorView(_ message: String) -> some View {
+        VStack(spacing: 16) {
+            Spacer()
+            Image(systemName: "exclamationmark.triangle.fill")
+                .resizable()
+                .frame(width: 48, height: 48)
+                .foregroundColor(.red)
+            Text("Ошибка")
+                .font(.title2)
+            Text(message)
+                .foregroundColor(.red)
+            Button("Попробовать снова") {
+                viewModel.send(intent: .load)
+            }
+            Spacer()
         }
     }
 

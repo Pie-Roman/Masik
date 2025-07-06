@@ -7,57 +7,63 @@
 
 import Foundation
 
-final class NoteListProcessor {
+final class NoteListProcessor: Processor {
+    
+    typealias Intent = NoteListIntent
+    
+    weak var handler: (any NoteListHandler)?
+    
     private let interactor: NoteListInteractor
 
     init(interactor: NoteListInteractor) {
         self.interactor = interactor
     }
-
-    func process(currentState: NoteListState, intent: NoteListIntent) async -> NoteListState {
+    
+    func process(intent: NoteListIntent) {
         switch intent {
+            
         case .load:
-            do {
-                let noteList = try await interactor.loadNotes()
-                return .loaded(noteList)
-            } catch {
-                return .error(error.localizedDescription)
+            handler?.handle(intent: .showLoading)
+            Task {
+                do {
+                    let noteList = try await interactor.loadNoteList()
+                    handler?.handle(intent: .showLoaded(noteList))
+                } catch {
+                    handler?.handle(intent: .showError(error.localizedDescription))
+                }
             }
+            
         case .add(let noteBody):
-            guard case .loaded(let currentList) = currentState else {
-                return currentState
+            handler?.handle(intent: .showLoading)
+            Task {
+                do {
+                    let note = try await interactor.addNote(noteBody: noteBody)
+                    handler?.handle(intent: .showAdded(note))
+                } catch {
+                    handler?.handle(intent: .showError(error.localizedDescription))
+                }
             }
-            do {
-                let note = try await interactor.addNote(noteBody: noteBody)
-                let all = currentList.items + [note]
-                return .loaded(NoteList(items: all))
-            } catch {
-                return .error(error.localizedDescription)
-            }
+            
         case .delete(let id):
-            guard case .loaded(let currentList) = currentState else {
-                return currentState
+            handler?.handle(intent: .showDeleted(id: id))
+            Task {
+                do {
+                    try await interactor.deleteNote(id: id)
+                } catch {
+                }
             }
-            do {
-                try await interactor.deleteNote(id: id)
-                let filtered = currentList.items.filter { $0.id != id }
-                return .loaded(NoteList(items: filtered))
-            } catch {
-                return .error(error.localizedDescription)
-            }
+            
         case .toggleDone(let id, let isDone):
-            guard case .loaded(let currentList) = currentState else {
-                return currentState
+            handler?.handle(intent: .showToggledDone(id: id, isDone: isDone))
+            Task {
+                do {
+                    try await interactor.toggleDone(id: id, isDone: isDone)
+                } catch {
+                }
             }
-            do {
-                let updatedNote = try await interactor.toggleDone(id: id, isDone: isDone)
-                let updatedItems = currentList.items.map { $0.id == id ? updatedNote ?? $0 : $0 }
-                return .loaded(NoteList(items: updatedItems))
-            } catch {
-                return .error(error.localizedDescription)
-            }
-        case .showError(let msg):
-            return .error(msg)
+            
+        default:
+            handler?.handle(intent: intent)
         }
     }
 }
