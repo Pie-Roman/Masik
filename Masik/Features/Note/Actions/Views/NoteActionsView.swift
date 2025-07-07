@@ -11,7 +11,7 @@ struct NoteActionsView: View {
     
     let id: String
     
-    @Binding var isPresented: Bool
+    @Binding var routeState: NoteActionsRouteState
     @StateObject var viewModel = NoteActionsViewModel()
     
     var body: some View {
@@ -58,8 +58,10 @@ struct NoteActionsView: View {
         .padding(.horizontal, 16)
         .padding(.bottom, 8)
         .onChange(of: viewModel.state) { state in
-            if state == .cancelled || state == .deleted {
-                isPresented = false
+            if state == .cancelled {
+                routeState = .cancelled
+            } else if state == .deleted {
+                routeState = .deleted
             }
         }
     }

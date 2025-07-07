@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum NoteActionsState: Identifiable {
+enum NoteActionsState {
     
     case idle
     case deleted

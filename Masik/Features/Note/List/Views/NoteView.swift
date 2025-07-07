@@ -10,7 +10,7 @@ struct NoteView: View {
     let note: Note
     let heightOffset: Int
     var onTap: () -> Void
-    @State private var isActionsPresented = false
+    @State private var actionsRouteState: NoteActionsRouteState = .none
     
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -31,15 +31,22 @@ struct NoteView: View {
             
             // Кнопка меню (многоточие)
             Button(action: {
-                isActionsPresented = true
+                actionsRouteState = .idle
             }) {
                 Image(systemName: "ellipsis")
                     .foregroundColor(.black.opacity(0.7))
                     .padding(12)
             }
         }
-        .sheet(isPresented: $isActionsPresented) {
-            NoteActionsView(id: note.id, isPresented: $isActionsPresented)
+        .sheet(
+            isPresented: Binding(
+                get: { actionsRouteState.isPresented },
+                set: { newValue in
+                    actionsRouteState = newValue ? .idle : .none
+                }
+            )
+        ) {
+            NoteActionsView(id: note.id, routeState: $actionsRouteState)
                 .presentationBackground(.clear)
                 .presentationDetents([.height(262)])
                 .presentationDragIndicator(.hidden)
