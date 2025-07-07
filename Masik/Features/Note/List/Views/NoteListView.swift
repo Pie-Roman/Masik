@@ -95,17 +95,25 @@ struct NoteListView: View {
 
                     VStack(spacing: 12) {
                         ForEach(noteList.items.enumerated().filter { $0.offset % 2 == 0 }, id: \.element.id) { index, note in
-                            NoteView(note: note, heightOffset: index % 3) {
-                                viewModel.send(intent: .toggleDone(id: note.id, isDone: !note.body.isDone))
-                            }
+                            NoteView(
+                                note: note,
+                                heightOffset: index % 3,
+                                onDeleted: {
+                                    viewModel.send(intent: .delete(id: note.id))
+                                }
+                            )
                         }
                     }
 
                     VStack(spacing: 12) {
                         ForEach(noteList.items.enumerated().filter { $0.offset % 2 != 0 }, id: \.element.id) { index, note in
-                            NoteView(note: note, heightOffset: index % 3) {
-                                viewModel.send(intent: .toggleDone(id: note.id, isDone: !note.body.isDone))
-                            }
+                            NoteView(
+                                note: note,
+                                heightOffset: index % 3,
+                                onDeleted: {
+                                    viewModel.send(intent: .delete(id: note.id))
+                                }
+                            )
                         }
                     }
                 }

@@ -7,10 +7,12 @@
 import SwiftUI
 
 struct NoteView: View {
+    
     let note: Note
     let heightOffset: Int
-    var onTap: () -> Void
-    @State private var actionsRouteState: NoteActionsRouteState = .none
+    let onDeleted: () -> Void
+    
+    @State private var isActionsPresented = false
     
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -25,28 +27,21 @@ struct NoteView: View {
                 )
                 .background(randomSoftColor())
                 .cornerRadius(24)
-                .onTapGesture {
-                    onTap()
-                }
             
-            // Кнопка меню (многоточие)
             Button(action: {
-                actionsRouteState = .idle
+                isActionsPresented = true
             }) {
                 Image(systemName: "ellipsis")
                     .foregroundColor(.black.opacity(0.7))
                     .padding(12)
             }
         }
-        .sheet(
-            isPresented: Binding(
-                get: { actionsRouteState.isPresented },
-                set: { newValue in
-                    actionsRouteState = newValue ? .idle : .none
-                }
+        .sheet(isPresented: $isActionsPresented) {
+            NoteActionsView(
+                id: note.id,
+                onDeleteTap: onDeleted,
+                isPresented: $isActionsPresented
             )
-        ) {
-            NoteActionsView(id: note.id, routeState: $actionsRouteState)
                 .presentationBackground(.clear)
                 .presentationDetents([.height(262)])
                 .presentationDragIndicator(.hidden)

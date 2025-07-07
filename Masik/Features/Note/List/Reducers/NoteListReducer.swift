@@ -32,14 +32,14 @@ class NoteListReducer: Reducer {
             return .loaded(NoteList(items: all))
             
         case .showDeleted(let id):
-            guard case .loading(let noteList) = currentState else {
+            guard case .loaded(let noteList) = currentState else {
                 return currentState
             }
             let filtered = noteList.items.filter { $0.id != id }
             return .loaded(NoteList(items: filtered))
             
         case .showToggledDone(let id, let isDone):
-            guard case .loading(let noteList) = currentState else {
+            guard case .loaded(let noteList) = currentState else {
                 return currentState
             }
             let updatedNotes = noteList.items.map { $0.id == id ?

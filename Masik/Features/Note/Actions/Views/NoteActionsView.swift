@@ -10,16 +10,16 @@ import SwiftUI
 struct NoteActionsView: View {
     
     let id: String
+    let onDeleteTap: () -> Void
     
-    @Binding var routeState: NoteActionsRouteState
-    @StateObject var viewModel = NoteActionsViewModel()
+    @Binding var isPresented: Bool
     
     var body: some View {
         VStack(spacing: 8) {
             VStack(spacing: 0) {
                 
                 Button(action: {
-                    viewModel.send(intent: .cancel)
+                    isPresented = false
                 }) {
                     Text("Редактировать")
                         .font(.body)
@@ -31,7 +31,8 @@ struct NoteActionsView: View {
                 Divider()
                 
                 Button(action: {
-                    viewModel.send(intent: .delete(id: id))
+                    isPresented = false
+                    onDeleteTap()
                 }) {
                     Text("Удалить")
                         .font(.body)
@@ -44,7 +45,7 @@ struct NoteActionsView: View {
             .cornerRadius(12)
             
             Button(action: {
-                viewModel.send(intent: .cancel)
+                isPresented = false
             }) {
                 Text("Отмена")
                     .font(.headline)
@@ -57,12 +58,5 @@ struct NoteActionsView: View {
         }
         .padding(.horizontal, 16)
         .padding(.bottom, 8)
-        .onChange(of: viewModel.state) { state in
-            if state == .cancelled {
-                routeState = .cancelled
-            } else if state == .deleted {
-                routeState = .deleted
-            }
-        }
     }
 }
