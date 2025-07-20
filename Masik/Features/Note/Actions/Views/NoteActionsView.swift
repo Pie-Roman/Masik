@@ -9,17 +9,17 @@ import SwiftUI
 
 struct NoteActionsView: View {
     
-    let id: String
+    let note: Note
+    let onUpdateTap: () -> Void
     let onDeleteTap: () -> Void
-    
-    @Binding var isPresented: Bool
+    let onCancelTap: () -> Void
     
     var body: some View {
         VStack(spacing: 8) {
             VStack(spacing: 0) {
                 
                 Button(action: {
-                    isPresented = false
+                    onUpdateTap()
                 }) {
                     Text("Редактировать")
                         .font(.body)
@@ -31,7 +31,6 @@ struct NoteActionsView: View {
                 Divider()
                 
                 Button(action: {
-                    isPresented = false
                     onDeleteTap()
                 }) {
                     Text("Удалить")
@@ -45,7 +44,7 @@ struct NoteActionsView: View {
             .cornerRadius(12)
             
             Button(action: {
-                isPresented = false
+                onCancelTap()
             }) {
                 Text("Отмена")
                     .font(.headline)

@@ -31,6 +31,15 @@ class NoteListReducer: Reducer {
             let all = noteList.items + [note]
             return .loaded(NoteList(items: all))
             
+        case .showUpdated(let note):
+            guard case .loading(let noteList) = currentState else {
+                return currentState
+            }
+            let all = noteList.items.map { item in
+                item.id == note.id ? note : item
+            }
+            return .loaded(NoteList(items: all))
+            
         case .showDeleted(let id):
             guard case .loaded(let noteList) = currentState else {
                 return currentState

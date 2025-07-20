@@ -33,17 +33,6 @@ final class NoteListProcessor: Processor {
                 }
             }
             
-        case .add(let noteBody):
-            handler?.handle(intent: .showLoading)
-            Task {
-                do {
-                    let note = try await interactor.addNote(noteBody: noteBody)
-                    handler?.handle(intent: .showAdded(note))
-                } catch {
-                    handler?.handle(intent: .showError(error.localizedDescription))
-                }
-            }
-            
         case .delete(let id):
             handler?.handle(intent: .showDeleted(id: id))
             Task {

@@ -2,8 +2,8 @@ import SwiftUI
 
 struct NoteListView: View {
     @StateObject private var viewModel = NoteListViewModel()
-    @State private var showingAdd = false
-    @State private var newNoteTitle = ""
+    
+    @State private var noteEntryData: NoteEntryInitialData? = nil
 
     var body: some View {
         NavigationView {
@@ -26,38 +26,31 @@ struct NoteListView: View {
             .toolbar {
                 if case .loaded = viewModel.state {
                     Button {
-                        showingAdd = true
+                        noteEntryData = NoteEntryInitialData(
+                            mode: .add,
+                            note: nil
+                        )
                     } label: {
                         Image(systemName: "plus")
                     }
                 }
             }
-            .sheet(isPresented: $showingAdd) {
-                NavigationView {
-                    Form {
-                        TextField("Заметка", text: $newNoteTitle)
+            .sheet(item: $noteEntryData) { item in
+                NoteEntryView(
+                    initialData: item,
+                    onCancelled: {
+                        noteEntryData = nil
+                    },
+                    onAdded: { note in
+                        viewModel.send(intent: .showAdded(note))
+                        noteEntryData = nil
+                    },
+                    onUpdated: { note in
+                        viewModel.send(intent: .showLoading)
+                        viewModel.send(intent: .showUpdated(note))
+                        noteEntryData = nil
                     }
-                    .navigationTitle("Добавить дело")
-                    .toolbar {
-                        ToolbarItem(placement: .cancellationAction) {
-                            Button("Отмена") {
-                                showingAdd = false
-                                newNoteTitle = ""
-                            }
-                        }
-                        ToolbarItem(placement: .confirmationAction) {
-                            Button("Сохранить") {
-                                if !newNoteTitle.isEmpty {
-                                    let body = NoteBody(title: newNoteTitle, isDone: false)
-                                    viewModel.send(intent: .add(body: body))
-                                    showingAdd = false
-                                    newNoteTitle = ""
-                                }
-                            }
-                            .disabled(newNoteTitle.isEmpty)
-                        }
-                    }
-                }
+                )
             }
         }
     }
@@ -95,25 +88,13 @@ struct NoteListView: View {
 
                     VStack(spacing: 12) {
                         ForEach(noteList.items.enumerated().filter { $0.offset % 2 == 0 }, id: \.element.id) { index, note in
-                            NoteView(
-                                note: note,
-                                heightOffset: index % 3,
-                                onDeleted: {
-                                    viewModel.send(intent: .delete(id: note.id))
-                                }
-                            )
+                            noteListItemView(note: note, index: index)
                         }
                     }
 
                     VStack(spacing: 12) {
                         ForEach(noteList.items.enumerated().filter { $0.offset % 2 != 0 }, id: \.element.id) { index, note in
-                            NoteView(
-                                note: note,
-                                heightOffset: index % 3,
-                                onDeleted: {
-                                    viewModel.send(intent: .delete(id: note.id))
-                                }
-                            )
+                            noteListItemView(note: note, index: index)
                         }
                     }
                 }
@@ -140,5 +121,19 @@ struct NoteListView: View {
             }
             Spacer()
         }
+    }
+    
+    @ViewBuilder
+    private func noteListItemView(note: Note, index: Int) -> some View {
+        NoteListItemView(
+            note: note,
+            heightOffset: index % 3,
+            onUpdateTap: {
+                noteEntryData = NoteEntryInitialData(mode: .update, note: note)
+            },
+            onDeleteTap: {
+                viewModel.send(intent: .delete(id: note.id))
+            }
+        )
     }
 }

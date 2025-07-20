@@ -6,11 +6,12 @@
 //
 import SwiftUI
 
-struct NoteView: View {
+struct NoteListItemView: View {
     
     let note: Note
     let heightOffset: Int
-    let onDeleted: () -> Void
+    let onUpdateTap: () -> Void
+    let onDeleteTap: () -> Void
     
     @State private var isActionsPresented = false
     
@@ -38,9 +39,18 @@ struct NoteView: View {
         }
         .sheet(isPresented: $isActionsPresented) {
             NoteActionsView(
-                id: note.id,
-                onDeleteTap: onDeleted,
-                isPresented: $isActionsPresented
+                note: note,
+                onUpdateTap: {
+                    isActionsPresented = false
+                    onUpdateTap()
+                },
+                onDeleteTap: {
+                    isActionsPresented = false
+                    onDeleteTap()
+                },
+                onCancelTap: {
+                    isActionsPresented = false
+                }
             )
                 .presentationBackground(.clear)
                 .presentationDetents([.height(262)])

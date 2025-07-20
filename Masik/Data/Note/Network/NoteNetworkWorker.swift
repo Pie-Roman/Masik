@@ -78,4 +78,18 @@ class NoteNetworkWorker {
         let noteDto = try? decoder.decode(NoteNetworkDto.self, from: data)
         return try? noteDto.map { try noteNetworkMapper.map(dto: $0) }
     }
+    
+    func update(id: String, noteBody: NoteBody) async throws -> Note {
+        guard let url = URL(string: "\(baseURL)/\(id)") else { throw URLError(.badURL) }
+        let noteBodyDto = noteBodyNetworkMapper.map(model: noteBody)
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "PATCH"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try? encoder.encode(noteBodyDto)
+
+        let (data, _) = try await URLSession.shared.data(for: request)
+        let noteDto = try decoder.decode(NoteNetworkDto.self, from: data)
+        return try noteNetworkMapper.map(dto: noteDto)
+    }
 }

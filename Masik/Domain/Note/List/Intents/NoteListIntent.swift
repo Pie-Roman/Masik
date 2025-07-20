@@ -11,8 +11,9 @@ enum NoteListIntent {
     case showLoading
     case showLoaded(NoteList)
     
-    case add(body: NoteBody)
     case showAdded(Note)
+    
+    case showUpdated(Note)
     
     case delete(id: String)
     case showDeleted(id: String)
