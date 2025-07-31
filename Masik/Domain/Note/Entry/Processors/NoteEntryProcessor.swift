@@ -35,7 +35,7 @@ final class NoteEntryProcessor: Processor {
             Task {
                 do {
                     let note = try await interactor.updateNote(id: id, noteBody: noteBody)
-                    handler?.handle(intent: .showUpdated(id: id, note: note))
+                    handler?.handle(intent: .showUpdated(note: note))
                 } catch {
                     
                 }

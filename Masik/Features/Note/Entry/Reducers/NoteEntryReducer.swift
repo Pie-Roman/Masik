@@ -18,7 +18,7 @@ class NoteEntryReducer: Reducer {
         case .showAdded(let note):
             return .added(note: note)
             
-        case .showUpdated(let id, let note):
+        case .showUpdated(let note):
             return .updated(note: note)
             
         default:

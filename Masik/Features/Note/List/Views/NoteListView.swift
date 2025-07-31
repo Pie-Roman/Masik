@@ -42,6 +42,7 @@ struct NoteListView: View {
                         noteEntryData = nil
                     },
                     onAdded: { note in
+                        viewModel.send(intent: .showLoading)
                         viewModel.send(intent: .showAdded(note))
                         noteEntryData = nil
                     },

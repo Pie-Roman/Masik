@@ -11,5 +11,5 @@ enum NoteEntryIntent {
     case showAdded(note: Note)
     
     case update(id: String, body: NoteBody)
-    case showUpdated(id: String, note: Note)
+    case showUpdated(note: Note)
 }
