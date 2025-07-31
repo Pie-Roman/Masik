@@ -47,22 +47,6 @@ class NoteListReducer: Reducer {
             let filtered = noteList.items.filter { $0.id != id }
             return .loaded(NoteList(items: filtered))
             
-        case .showToggledDone(let id, let isDone):
-            guard case .loaded(let noteList) = currentState else {
-                return currentState
-            }
-            let updatedNotes = noteList.items.map { $0.id == id ?
-                Note(
-                    id: id,
-                    body: NoteBody(
-                        title: $0.body.title,
-                        isDone: isDone
-                    )
-                )
-                : $0
-            }
-            return .loaded(NoteList(items: updatedNotes))
-            
         case .showError(let msg):
             return .error(msg)
             

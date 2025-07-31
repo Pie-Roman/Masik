@@ -10,4 +10,5 @@ import Foundation
 struct NoteBodyNetworkDto: Codable {
     let title: String?
     let isDone: Bool?
+    let tags: [NoteTagNetworkDto]?
 }

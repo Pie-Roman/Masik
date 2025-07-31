@@ -8,4 +8,5 @@
 struct NoteBody {
     let title: String
     let isDone: Bool
+    let tags: Set<NoteTag>
 }

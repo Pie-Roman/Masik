@@ -18,8 +18,5 @@ enum NoteListIntent {
     case delete(id: String)
     case showDeleted(id: String)
     
-    case toggleDone(id: String, isDone: Bool)
-    case showToggledDone(id: String, isDone: Bool)
-    
     case showError(String)
 }

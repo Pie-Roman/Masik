@@ -42,15 +42,6 @@ final class NoteListProcessor: Processor {
                 }
             }
             
-        case .toggleDone(let id, let isDone):
-            handler?.handle(intent: .showToggledDone(id: id, isDone: isDone))
-            Task {
-                do {
-                    try await interactor.toggleDone(id: id, isDone: isDone)
-                } catch {
-                }
-            }
-            
         default:
             handler?.handle(intent: intent)
         }
