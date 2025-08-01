@@ -7,12 +7,8 @@ struct NoteEntryView: View {
     let onUpdated: ((Note) -> Void)?
     let onCancelled: () -> Void
     
-    @State private var link: String = ""
-    @State private var title: String
-    
-    @StateObject private var viewModel: NoteEntryViewModel = NoteEntryViewModel()
-
-    @State private var tags: [NoteTag]
+    @StateObject private var viewModel: NoteEntryViewModel
+    @StateObject private var tagListViewModel = NoteEntryTagListViewModel()
 
     init(
         initialData: NoteEntryInitialData,
@@ -24,9 +20,12 @@ struct NoteEntryView: View {
         self.onCancelled = onCancelled
         self.onAdded = onAdded
         self.onUpdated = onUpdated
-
-        self.title = initialData.note?.body.title ?? ""
-        self.tags = Array(initialData.note?.body.tags ?? Set())
+        
+        self._viewModel = StateObject(
+            wrappedValue: NoteEntryViewModel(
+                initialData: initialData
+            )
+        )
     }
 
     var body: some View {
@@ -52,7 +51,10 @@ struct NoteEntryView: View {
 
                     Group {
 
-                        TextField("Заметка", text: $title)
+                        TextField("Заметка", text: Binding(
+                            get: { viewModel.title },
+                            set: { viewModel.title = $0 }
+                        ))
                             .padding(.horizontal, 16)
                             .fontWeight(.semibold)
                             .frame(height: 80)
@@ -60,7 +62,10 @@ struct NoteEntryView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                         
                         HStack {
-                            TextField("Ссылка", text: $link)
+                            TextField("Ссылка", text: Binding(
+                                get: { viewModel.link },
+                                set: { viewModel.link = $0 }
+                            ))
                                 .padding(.leading, 16)
                                 .fontWeight(.semibold)
                             Image(systemName: "sparkles")
@@ -73,7 +78,9 @@ struct NoteEntryView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                     }
 
-                    noteTagsView()
+                    NoteEntryTagListView(
+                        viewModel: tagListViewModel
+                    )
                 }
                 .padding()
             }
@@ -88,11 +95,11 @@ struct NoteEntryView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Готово") {
-                        if !title.isEmpty {
+                        if !viewModel.title.isEmpty {
                             let body = NoteBody(
-                                title: title,
+                                title: viewModel.title,
                                 isDone: false,
-                                tags: Set(tags),
+                                tags: Set(tagListViewModel.tags),
                             )
 
                             switch initialData.mode {
@@ -106,7 +113,7 @@ struct NoteEntryView: View {
                         }
                     }
                     .fontWeight(.semibold)
-                    .disabled(title.isEmpty)
+                    .disabled(viewModel.title.isEmpty)
                 }
             }
             .onReceive(viewModel.$state) { state in
@@ -117,39 +124,6 @@ struct NoteEntryView: View {
                     onUpdated?(note)
                 default:
                     break
-                }
-            }
-        }
-    }
-    
-    @ViewBuilder
-    private func noteTagsView() -> some View {
-        VStack(spacing: 8) {
-            HStack {
-                Text("Теги")
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundColor(.gray)
-                Spacer()
-                Button(action: {
-                    // добавить новый список
-                }) {
-                    Text("Новый тег")
-                        .font(.system(size: 17, weight: .semibold))
-                }
-            }
-            .padding(.horizontal, 4)
-
-            VStack(spacing: 8) {
-                ForEach(tags, id: \.self) { tag in
-                    HStack {
-                        Image(systemName: "list.bullet.rectangle")
-                        Text(tag.name)
-                        Spacer()
-                    }
-                    .padding(.horizontal, 16)
-                    .frame(height: 52)
-                    .background(Color(UIColor.systemGray5))
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
                 }
             }
         }

@@ -12,7 +12,7 @@ class NoteBodyNetworkMapper {
     func map(dto: NoteBodyNetworkDto?) -> NoteBody {
         let title = dto?.title ?? ""
         let isDone = dto?.isDone ?? false
-        let tags = Set((dto?.tags ?? []).map(noteTagNetworkMapper.map))
+        let tags = Set((dto?.tags ?? []).compactMap { try? noteTagNetworkMapper.map(dto: $0) })
 
         return NoteBody(
             title: title,

@@ -9,9 +9,13 @@ import Foundation
 
 class NoteTagNetworkMapper {
     
-    func map(dto: NoteTagNetworkDto) -> NoteTag {
-        let name = dto.name ?? ""
-        let color = dto.color ?? ""
+    func map(dto: NoteTagNetworkDto) throws -> NoteTag {
+        guard
+            let name = dto.name,
+            let color = dto.color
+        else {
+            throw NSError(domain: "", code: 1, userInfo: nil)
+        }
         
         return NoteTag(
             name: name,

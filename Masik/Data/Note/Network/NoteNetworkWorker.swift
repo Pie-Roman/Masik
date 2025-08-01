@@ -11,7 +11,7 @@ class NoteNetworkWorker {
 
     static let shared = NoteNetworkWorker()
 
-    private let baseURL = "http://89.169.182.244:8080/notes" // замени на свой сервер при деплое
+    private let baseURL = "http://89.169.182.244:8080/notes"
 
     private let decoder: JSONDecoder = {
         let decoder = JSONDecoder()
@@ -27,6 +27,7 @@ class NoteNetworkWorker {
     private let noteListNetworkMapper = NoteListNetworkMapper()
     private let noteNetworkMapper = NoteNetworkMapper()
     private let noteBodyNetworkMapper = NoteBodyNetworkMapper()
+    private let noteTagNetworkMapper = NoteTagNetworkMapper()
 
     func fetchAll() async throws -> NoteList {
         guard let url = URL(string: baseURL) else { return NoteList(items: []) }
@@ -74,5 +75,27 @@ class NoteNetworkWorker {
         let (data, _) = try await URLSession.shared.data(for: request)
         let noteDto = try decoder.decode(NoteNetworkDto.self, from: data)
         return try noteNetworkMapper.map(dto: noteDto)
+    }
+    
+    func fetchAllTags() async throws -> [NoteTag] {
+        guard let url = URL(string: "\(baseURL)/tags") else { return [] }
+        let (data, _) = try await URLSession.shared.data(from: url)
+        let listDto = try decoder.decode([NoteTagNetworkDto].self, from: data)
+        return try listDto.map(noteTagNetworkMapper.map)
+    }
+    
+    func addTag(tag: NoteTag) async throws -> NoteTag {
+        guard let url = URL(string: "\(baseURL)/tags") else { throw URLError(.badURL) }
+        let noteTagDto = noteTagNetworkMapper.map(model: tag)
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try encoder.encode(noteTagDto)
+
+        let (data, _) = try await URLSession.shared.data(for: request)
+
+        let addedNoteTagDto = try decoder.decode(NoteTagNetworkDto.self, from: data)
+        return try noteTagNetworkMapper.map(dto: addedNoteTagDto)
     }
 }

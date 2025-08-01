@@ -11,13 +11,19 @@ final class NoteEntryViewModel: ObservableObject {
     
     @Published private(set) var state: NoteEntryState = .idle
     
+    @Published var link: String = ""
+    @Published var title: String
+    
     private let processor: NoteEntryProcessor
     private let reducer: NoteEntryReducer
 
     init(
+        initialData: NoteEntryInitialData,
         interactor: NoteEntryInteractor = NoteEntryInteractor(),
         reducer: NoteEntryReducer = NoteEntryReducer()
     ) {
+        self.title = initialData.note?.body.title ?? ""
+        
         self.processor = NoteEntryProcessor(interactor: interactor)
         self.reducer = reducer
         self.processor.handler = self
