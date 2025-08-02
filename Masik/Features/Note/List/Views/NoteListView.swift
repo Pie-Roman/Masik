@@ -75,34 +75,46 @@ struct NoteListView: View {
     
     @ViewBuilder
     private func loadedView(_ noteList: NoteList) -> some View {
-        if noteList.items.isEmpty {
-            VStack(spacing: 24) {
-                Spacer()
-                Text("Список дел пуст")
-                    .foregroundColor(.gray)
-                    .font(.title3)
-                Spacer()
-            }
-        } else {
-            ScrollView {
-                HStack(alignment: .top, spacing: 12) {
-
-                    VStack(spacing: 12) {
-                        ForEach(noteList.items.enumerated().filter { $0.offset % 2 == 0 }, id: \.element.id) { index, note in
-                            noteListItemView(note: note, index: index)
-                        }
-                    }
-
-                    VStack(spacing: 12) {
-                        ForEach(noteList.items.enumerated().filter { $0.offset % 2 != 0 }, id: \.element.id) { index, note in
-                            noteListItemView(note: note, index: index)
-                        }
+        VStack {
+            
+            ScrollView(.horizontal) {
+                HStack(alignment: .top) {
+                    ForEach(noteList.tags, id: \.name) { tag in
+                        Text(tag.name)
                     }
                 }
-                .padding(.horizontal)
-                .padding(.top)
+            }
+            .padding(.top, 8)
+            
+            if noteList.items.isEmpty {
+                VStack(spacing: 12) {
+                    Spacer()
+                    Text("Список дел пуст")
+                        .foregroundColor(.gray)
+                        .font(.title3)
+                    Spacer()
+                }
+            } else {
+                ScrollView {
+                    HStack(alignment: .top) {
+
+                        VStack(spacing: 12) {
+                            ForEach(noteList.items.enumerated().filter { $0.offset % 2 == 0 }, id: \.element.id) { index, note in
+                                noteListItemView(note: note, index: index)
+                            }
+                        }
+
+                        VStack(spacing: 12) {
+                            ForEach(noteList.items.enumerated().filter { $0.offset % 2 != 0 }, id: \.element.id) { index, note in
+                                noteListItemView(note: note, index: index)
+                            }
+                        }
+                    }
+                    .padding(.top)
+                }
             }
         }
+        .padding(.horizontal)
     }
     
     @ViewBuilder

@@ -30,7 +30,10 @@ class NoteNetworkWorker {
     private let noteTagNetworkMapper = NoteTagNetworkMapper()
 
     func fetchAll() async throws -> NoteList {
-        guard let url = URL(string: baseURL) else { return NoteList(items: []) }
+        guard let url = URL(string: baseURL) else { return NoteList(
+            tags: [],
+            items: [],
+        ) }
         let (data, _) = try await URLSession.shared.data(from: url)
         let listDto = try decoder.decode(NoteListNetworkDto.self, from: data)
         return try noteListNetworkMapper.map(dto: listDto)

@@ -8,5 +8,6 @@
 import Foundation
 
 struct NoteListNetworkDto: Codable {
+    let tags: [NoteTagNetworkDto]?
     let items: [NoteNetworkDto]?
 }

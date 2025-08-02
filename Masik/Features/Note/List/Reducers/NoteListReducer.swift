@@ -17,7 +17,7 @@ class NoteListReducer: Reducer {
             
         case .showLoading:
             guard case .loaded(let noteList) = currentState else {
-                return .loading(NoteList(items: []))
+                return .loading(NoteList(tags: [], items: []))
             }
             return .loading(noteList)
             
@@ -29,7 +29,7 @@ class NoteListReducer: Reducer {
                 return currentState
             }
             let all = noteList.items + [note]
-            return .loaded(NoteList(items: all))
+            return .loaded(NoteList(tags: noteList.tags, items: all))
             
         case .showUpdated(let note):
             guard case .loading(let noteList) = currentState else {
@@ -38,14 +38,14 @@ class NoteListReducer: Reducer {
             let all = noteList.items.map { item in
                 item.id == note.id ? note : item
             }
-            return .loaded(NoteList(items: all))
+            return .loaded(NoteList(tags: noteList.tags, items: all))
             
         case .showDeleted(let id):
             guard case .loaded(let noteList) = currentState else {
                 return currentState
             }
             let filtered = noteList.items.filter { $0.id != id }
-            return .loaded(NoteList(items: filtered))
+            return .loaded(NoteList(tags: noteList.tags, items: filtered))
             
         case .showError(let msg):
             return .error(msg)
