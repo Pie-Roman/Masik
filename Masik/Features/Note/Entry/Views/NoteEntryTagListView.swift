@@ -107,8 +107,16 @@ struct NoteEntryTagListView: View {
 
                             Spacer()
 
-                            Image(systemName: "circle")
-                                .foregroundColor(.gray)
+                            Button(action: {
+                                if viewModel.selectedTagNames.contains(tag.name) {
+                                    viewModel.selectedTagNames.removeAll { $0 == tag.name }
+                                } else {
+                                    viewModel.selectedTagNames.append(tag.name)
+                                }
+                            }) {
+                                Image(systemName: viewModel.selectedTagNames.contains(tag.name) ? "checkmark.circle.fill" : "circle")
+                                    .foregroundColor(viewModel.selectedTagNames.contains(tag.name) ? .blue : .gray)
+                            }
                         }
                         .padding(.horizontal, 16)
                         .frame(height: 52)

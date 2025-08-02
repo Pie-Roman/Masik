@@ -8,7 +8,7 @@ struct NoteEntryView: View {
     let onCancelled: () -> Void
     
     @StateObject private var viewModel: NoteEntryViewModel
-    @StateObject private var tagListViewModel = NoteEntryTagListViewModel()
+    @StateObject private var tagListViewModel: NoteEntryTagListViewModel
 
     init(
         initialData: NoteEntryInitialData,
@@ -24,6 +24,14 @@ struct NoteEntryView: View {
         self._viewModel = StateObject(
             wrappedValue: NoteEntryViewModel(
                 initialData: initialData
+            )
+        )
+        
+        self._tagListViewModel = StateObject(
+            wrappedValue: NoteEntryTagListViewModel(
+                initialData: NoteEntryTagListInitialData(
+                    note: initialData.note
+                )
             )
         )
     }
@@ -96,10 +104,14 @@ struct NoteEntryView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Готово") {
                         if !viewModel.title.isEmpty {
+                            var tags: [NoteTag] = []
+                            if case .loaded(let loadedTags) = tagListViewModel.state {
+                                tags = loadedTags.filter { tagListViewModel.selectedTagNames.contains($0.name) }
+                            }
                             let body = NoteBody(
                                 title: viewModel.title,
                                 isDone: false,
-                                tags: Set(tagListViewModel.tags),
+                                tags: Set(tags),
                             )
 
                             switch initialData.mode {
