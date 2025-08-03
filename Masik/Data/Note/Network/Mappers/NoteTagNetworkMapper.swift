@@ -11,6 +11,7 @@ class NoteTagNetworkMapper {
     
     func map(dto: NoteTagNetworkDto) throws -> NoteTag {
         guard
+            let id = dto.id,
             let name = dto.name,
             let color = dto.color
         else {
@@ -18,16 +19,19 @@ class NoteTagNetworkMapper {
         }
         
         return NoteTag(
+            id: id,
             name: name,
             color: color
         )
     }
     
     func map(model: NoteTag) -> NoteTagNetworkDto {
+        let id = model.id
         let name = model.name
         let color = model.color
         
         return NoteTagNetworkDto(
+            id: id,
             name: name,
             color: color
         )

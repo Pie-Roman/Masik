@@ -46,12 +46,12 @@ final class NoteListProcessor: Processor {
                 }
             }
 
-        case .loadForTag(let tagName):
+        case .loadForTag(let tagId):
             handler?.handle(intent: .showLoading)
             Task {
                 do {
                     let noteList = try await interactor.loadNoteList(
-                        tagName: tagName
+                        tagId: tagId
                     )
                     handler?.handle(intent: .showLoaded(noteList))
                 } catch {

@@ -28,7 +28,16 @@ final class NoteTagEntryProcessor: Processor {
                 } catch {
                 }
             }
-            
+
+        case .update(let id, let tag):
+            Task {
+                do {
+                    let updatedTag = try await interactor.updateTag(id: id, tag: tag)
+                    handler?.handle(intent: .showUpdated(tag: updatedTag))
+                } catch {
+                }
+            }
+
         default:
             handler?.handle(intent: intent)
         }

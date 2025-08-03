@@ -8,4 +8,5 @@
 enum NoteTagEntryState {
     case idle
     case added(tag: NoteTag)
+    case updated(tag: NoteTag)
 }

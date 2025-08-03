@@ -106,7 +106,7 @@ struct NoteEntryView: View {
                         if !viewModel.title.isEmpty {
                             var tags: [NoteTag] = []
                             if case .loaded(let loadedTags) = tagListViewModel.state {
-                                tags = loadedTags.filter { tagListViewModel.selectedTagNames.contains($0.name) }
+                                tags = loadedTags.filter { tagListViewModel.selectedTagIds.contains($0.id) }
                             }
                             let body = NoteBody(
                                 title: viewModel.title,

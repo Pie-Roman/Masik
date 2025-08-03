@@ -36,7 +36,7 @@ struct NoteListTabsView<Content>: View where Content : View {
                         }
                     )
 
-                    ForEach(viewModel.tags, id: \.name) { tag in
+                    ForEach(viewModel.tags, id: \.id) { tag in
                         noteListTabView(
                             name: tag.name,
                             color: Color(hex: tag.color) ?? Color(uiColor: .systemGray5),

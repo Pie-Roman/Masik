@@ -43,18 +43,18 @@ class NoteNetworkWorker {
     }
 
     func fetchAll(
-        tagName: String?
+        tagId: String?
     ) async throws -> NoteList {
         guard var urlComponents = URLComponents(string: baseURL) else { return NoteList(
             tags: [],
             items: [],
         ) }
         var queryItems: [URLQueryItem] = []
-        if let tagName {
+        if let tagId {
             queryItems.append(
                 URLQueryItem(
-                    name: "tagName",
-                    value: tagName
+                    name: "tagId",
+                    value: tagId
                 )
             )
         }
@@ -130,6 +130,21 @@ class NoteNetworkWorker {
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try encoder.encode(noteTagDto)
+
+        let (data, _) = try await URLSession.shared.data(for: request)
+
+        let addedNoteTagDto = try decoder.decode(NoteTagNetworkDto.self, from: data)
+        return try noteTagNetworkMapper.map(dto: addedNoteTagDto)
+    }
+
+    func updateTag(id: String, tag: NoteTag) async throws -> NoteTag {
+        guard let url = URL(string: "\(baseURL)/tags/\(id)") else { throw URLError(.badURL) }
+        let noteTagDto = noteTagNetworkMapper.map(model: tag)
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "PATCH"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try encoder.encode(noteTagDto)
 

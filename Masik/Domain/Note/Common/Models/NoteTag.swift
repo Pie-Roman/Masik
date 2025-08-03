@@ -6,10 +6,7 @@
 //
 
 struct NoteTag: Identifiable, Hashable {
+    let id: String
     let name: String
     let color: String
-    
-    var id: String {
-        return name
-    }
 }

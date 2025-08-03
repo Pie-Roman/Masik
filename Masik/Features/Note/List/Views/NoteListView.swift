@@ -21,7 +21,7 @@ struct NoteListView: View {
             NoteListTabsView(
                 onTabTapAction: { tag in
                     if let tag {
-                        viewModel.send(intent: .loadForTag(tagName: tag.name))
+                        viewModel.send(intent: .loadForTag(tagId: tag.id))
                     } else {
                         viewModel.send(intent: .load)
                     }

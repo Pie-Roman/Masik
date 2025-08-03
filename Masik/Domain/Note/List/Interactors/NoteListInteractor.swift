@@ -24,10 +24,10 @@ class NoteListInteractor {
     }
 
     func loadNoteList(
-        tagName: String? = nil
+        tagId: String? = nil
     ) async throws -> NoteList {
         try await networkWorker.fetchAll(
-            tagName: tagName
+            tagId: tagId
         )
     }
 

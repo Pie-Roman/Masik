@@ -11,8 +11,8 @@ final class NoteEntryTagListViewModel: ObservableObject {
     
     @Published private(set) var state: NoteEntryTagListState = .idle
 
-    @Published var selectedTagNames: [String]
-    
+    @Published var selectedTagIds: [String]
+
     private let processor: NoteEntryTagListProcessor
     private let reducer: NoteEntryTagListReducer
 
@@ -21,8 +21,8 @@ final class NoteEntryTagListViewModel: ObservableObject {
         interactor: NoteEntryTagListInteractor = NoteEntryTagListInteractor(),
         reducer: NoteEntryTagListReducer = NoteEntryTagListReducer()
     ) {
-        self.selectedTagNames = initialData.note?.body.tags.map(\.name) ?? []
-        
+        self.selectedTagIds = initialData.note?.body.tags.map(\.id) ?? []
+
         self.processor = NoteEntryTagListProcessor(interactor: interactor)
         self.reducer = reducer
         self.processor.handler = self

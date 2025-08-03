@@ -2,7 +2,10 @@ import SwiftUI
 
 struct NoteTagEntryView: View {
 
-    let onAdded: (NoteTag) -> Void
+    let initialData: NoteTagEntryInitialData
+
+    let onAdded: ((NoteTag) -> Void)?
+    let onUpdated: ((NoteTag) -> Void)?
     let onCancelled: () -> Void
     
     @State private var name: String = ""
@@ -76,11 +79,19 @@ struct NoteTagEntryView: View {
                             let b = Int(blue)
                             let color = String(format: "#%02X%02X%02X", r, g, b)
                             let tag = NoteTag(
+                                id: "",
                                 name: name,
                                 color: color
                             )
 
-                            viewModel.send(intent: .add(tag: tag))
+                            switch initialData.mode {
+                            case .add:
+                                viewModel.send(intent: .add(tag: tag))
+                            case .update:
+                                if let initialTag = initialData.tag {
+                                    viewModel.send(intent: .update(id: initialTag.id, tag: tag))
+                                }
+                            }
                         }
                     }
                     .fontWeight(.semibold)
@@ -89,8 +100,13 @@ struct NoteTagEntryView: View {
             }
             .onReceive(viewModel.$state) { state in
                 switch state {
+
                 case .added(let tag):
-                    onAdded(tag)
+                    onAdded?(tag)
+
+                case .updated(let tag):
+                    onUpdated?(tag)
+
                 default:
                     break
                 }

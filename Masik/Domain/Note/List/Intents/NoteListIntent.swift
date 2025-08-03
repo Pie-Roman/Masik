@@ -10,7 +10,7 @@ enum NoteListIntent {
     case launch
     
     case load
-    case loadForTag(tagName: String)
+    case loadForTag(tagId: String)
     case showLoading
     case showLoaded(NoteList)
     

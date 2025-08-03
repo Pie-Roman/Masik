@@ -44,11 +44,16 @@ struct NoteEntryTagListView: View {
         }
         .sheet(isPresented: $isTagEntryPresented) {
             NoteTagEntryView(
+                initialData: NoteTagEntryInitialData(
+                    mode: .add,
+                    tag: nil
+                ),
                 onAdded: { tag in
                     viewModel.send(intent: .showLoading)
                     viewModel.send(intent: .showAdded(tag: tag))
                     isTagEntryPresented = false
                 },
+                onUpdated: nil,
                 onCancelled: {
                     isTagEntryPresented = false
                 },
@@ -96,35 +101,41 @@ struct NoteEntryTagListView: View {
             } else {
                 VStack(spacing: 8) {
                     ForEach(tags, id: \.self) { tag in
-                        HStack(spacing: 12) {
-                            Circle()
-                                .fill(Color(hex: tag.color) ?? .gray)
-                                .frame(width: 24, height: 24)
-                                .shadow(radius: 1)
-
-                            Text(tag.name)
-                                .font(.system(size: 17))
-
-                            Spacer()
-
-                            Button(action: {
-                                if viewModel.selectedTagNames.contains(tag.name) {
-                                    viewModel.selectedTagNames.removeAll { $0 == tag.name }
-                                } else {
-                                    viewModel.selectedTagNames.append(tag.name)
-                                }
-                            }) {
-                                Image(systemName: viewModel.selectedTagNames.contains(tag.name) ? "checkmark.circle.fill" : "circle")
-                                    .foregroundColor(viewModel.selectedTagNames.contains(tag.name) ? .blue : .gray)
-                            }
-                        }
-                        .padding(.horizontal, 16)
-                        .frame(height: 52)
-                        .background(Color(UIColor.systemGray5))
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        tagListItemView(tag: tag)
                     }
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    private func tagListItemView(tag: NoteTag) -> some View {
+        Button(action: {
+            if viewModel.selectedTagIds.contains(tag.id) {
+                viewModel.selectedTagIds.removeAll { $0 == tag.id }
+            } else {
+                viewModel.selectedTagIds.append(tag.id)
+            }
+        }) {
+            HStack(spacing: 12) {
+                Circle()
+                    .fill(Color(hex: tag.color) ?? .gray)
+                    .frame(width: 24, height: 24)
+                    .shadow(radius: 1)
+
+                Text(tag.name)
+                    .font(.system(size: 17))
+
+                Spacer()
+
+                Image(systemName: viewModel.selectedTagIds.contains(tag.id) ? "checkmark.circle.fill" : "circle")
+                    .foregroundColor(viewModel.selectedTagIds.contains(tag.id) ? .blue : .gray)
+            }
+            .padding(.horizontal, 16)
+            .frame(height: 52)
+            .background(Color(UIColor.systemGray5))
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+        }
+        .buttonStyle(.plain)
     }
 }

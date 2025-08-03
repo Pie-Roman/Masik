@@ -12,4 +12,8 @@ class NoteTagEntryInteractor {
     func addTag(tag: NoteTag) async throws -> NoteTag {
         try await worker.addTag(tag: tag)
     }
+
+    func updateTag(id: String, tag: NoteTag) async throws -> NoteTag {
+        try await worker.updateTag(id: id, tag: tag)
+    }
 }

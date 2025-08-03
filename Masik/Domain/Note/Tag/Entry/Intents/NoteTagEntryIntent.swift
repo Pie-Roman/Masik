@@ -9,4 +9,7 @@ enum NoteTagEntryIntent {
     
     case add(tag: NoteTag)
     case showAdded(tag: NoteTag)
+
+    case update(id: String, tag: NoteTag)
+    case showUpdated(tag: NoteTag)
 }
