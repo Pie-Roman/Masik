@@ -37,5 +37,17 @@ extension Color {
 
         self.init(.sRGB, red: r, green: g, blue: b, opacity: a)
     }
+
+    var hexString: String {
+        guard let components = cgColor?.components, components.count >= 3 else {
+            return ""
+        }
+
+        let r = Int(components[0] * 255.0)
+        let g = Int(components[1] * 255.0)
+        let b = Int(components[2] * 255.0)
+
+        return String(format:"#%02lX%02lX%02lX", r, g, b)
+    }
 }
 

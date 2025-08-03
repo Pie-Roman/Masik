@@ -26,7 +26,7 @@ struct NoteListItemView: View {
                     minHeight: CGFloat(120 + heightOffset * 40),
                     alignment: .bottomLeading
                 )
-                .background(randomSoftColor())
+                .background(backgroundColor())
                 .cornerRadius(24)
             
             Button(action: {
@@ -59,7 +59,12 @@ struct NoteListItemView: View {
         }
     }
     
-    private func randomSoftColor() -> Color {
+    private func backgroundColor() -> Color {
+        let firstTag = note.body.tags.first
+        if let firstTag, let color = Color(hex: firstTag.color) {
+            return color
+        }
+
         let colors: [Color] = [
             Color(red: 0.93, green: 0.90, blue: 1.0),
             Color(red: 1.0, green: 0.93, blue: 0.95),

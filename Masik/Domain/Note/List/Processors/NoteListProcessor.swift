@@ -45,7 +45,20 @@ final class NoteListProcessor: Processor {
                     self.handler?.handle(intent: .showError(error.localizedDescription))
                 }
             }
-            
+
+        case .loadForTag(let tagName):
+            handler?.handle(intent: .showLoading)
+            Task {
+                do {
+                    let noteList = try await interactor.loadNoteList(
+                        tagName: tagName
+                    )
+                    handler?.handle(intent: .showLoaded(noteList))
+                } catch {
+                    handler?.handle(intent: .showError(error.localizedDescription))
+                }
+            }
+
         case .delete(let id):
             handler?.handle(intent: .showDeleted(id: id))
             Task {
@@ -54,7 +67,16 @@ final class NoteListProcessor: Processor {
                 } catch {
                 }
             }
-            
+
+        case .loadTags:
+            Task {
+                do {
+                    let tags = try await interactor.loadTags()
+                    handler?.handle(intent: .showTags(tags))
+                } catch {
+                }
+            }
+
         default:
             handler?.handle(intent: intent)
         }

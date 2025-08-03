@@ -46,7 +46,7 @@ class NoteListReducer: Reducer {
             }
             let filtered = noteList.items.filter { $0.id != id }
             return .loaded(NoteList(tags: noteList.tags, items: filtered))
-            
+
         case .showError(let msg):
             return .error(msg)
             

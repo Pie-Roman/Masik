@@ -9,11 +9,11 @@ class NoteListInteractor {
 
     private let networkWorker = NoteNetworkWorker()
     private let systemWorker = NoteSystemWorker()
-    
+
     func requestSystemEventsPermission(completion: @escaping (Bool) -> Void) {
         systemWorker.requestAccess(completion: completion)
     }
-    
+
     func launch(
         withSystemNotes: Bool
     ) async throws {
@@ -23,8 +23,12 @@ class NoteListInteractor {
         }
     }
 
-    func loadNoteList() async throws -> NoteList {
-        try await networkWorker.fetchAll()
+    func loadNoteList(
+        tagName: String? = nil
+    ) async throws -> NoteList {
+        try await networkWorker.fetchAll(
+            tagName: tagName
+        )
     }
 
     func addNote(noteBody: NoteBody) async throws -> Note {
@@ -33,5 +37,9 @@ class NoteListInteractor {
 
     func deleteNote(id: String) async throws {
         try await networkWorker.delete(id: id)
+    }
+
+    func loadTags() async throws -> [NoteTag] {
+        try await worker.fetchAllTags()
     }
 }

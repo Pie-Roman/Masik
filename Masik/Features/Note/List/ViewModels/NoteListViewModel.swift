@@ -11,14 +11,19 @@ import Foundation
 final class NoteListViewModel: ObservableObject {
     
     @Published private(set) var state: NoteListState = .idle
-    
+
     private let processor: NoteListProcessor
     private let reducer: NoteListReducer
 
+    private let noteListTabsViewModel: NoteListTabsViewModel
+
     init(
+        noteListTabsViewModel: NoteListTabsViewModel,
         interactor: NoteListInteractor = NoteListInteractor(),
         reducer: NoteListReducer = NoteListReducer()
     ) {
+        self.noteListTabsViewModel = noteListTabsViewModel
+
         self.processor = NoteListProcessor(interactor: interactor)
         self.reducer = reducer
         self.processor.handler = self
@@ -36,6 +41,14 @@ extension NoteListViewModel: NoteListHandler {
             guard let self else { return }
             let newState = self.reducer.reduce(currentState: state, intent: intent)
             self.state = newState
+
+            if case .loaded(let noteList) = newState, let newTags = noteList.tags {
+                self.noteListTabsViewModel.tags = newTags
+            }
+
+            if case .showTags(let tags) = intent {
+                self.noteListTabsViewModel.tags = tags
+            }
         }
     }
 }

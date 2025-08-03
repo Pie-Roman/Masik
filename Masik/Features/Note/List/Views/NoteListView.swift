@@ -1,41 +1,66 @@
 import SwiftUI
 
 struct NoteListView: View {
-    @StateObject private var viewModel = NoteListViewModel()
+
+    @StateObject private var tabsViewModel: NoteListTabsViewModel
+    @StateObject private var viewModel: NoteListViewModel
     
     @State private var noteEntryData: NoteEntryInitialData? = nil
 
+    init() {
+        let tabsViewModel = NoteListTabsViewModel()
+
+        self._tabsViewModel = StateObject(wrappedValue: tabsViewModel)
+        self._viewModel = StateObject(wrappedValue: NoteListViewModel(
+            noteListTabsViewModel: tabsViewModel
+        ))
+    }
+
     var body: some View {
         NavigationView {
-            Group {
-                switch viewModel.state {
-                case .idle:
-                    idleView()
+            NoteListTabsView(
+                onTabTapAction: { tag in
+                    if let tag {
+                        viewModel.send(intent: .loadForTag(tagName: tag.name))
+                    } else {
+                        viewModel.send(intent: .load)
+                    }
+                },
+            ) {
+                Group {
+                    switch viewModel.state {
+                    case .idle:
+                        idleView()
 
-                case .loading:
-                    loadingView()
+                    case .loading:
+                        loadingView()
 
-                case .loaded(let noteList):
-                    loadedView(noteList)
+                    case .loaded(let noteList):
+                        loadedView(noteList)
 
-                case .error(let message):
-                    errorView(message)
-                }
-            }
-            .navigationTitle("Что надо сделать")
-            .toolbar {
-                if case .loaded = viewModel.state {
-                    Button {
-                        noteEntryData = NoteEntryInitialData(
-                            mode: .add,
-                            note: nil
-                        )
-                    } label: {
-                        Image(systemName: "plus")
+                    case .error(let message):
+                        errorView(message)
                     }
                 }
             }
-            .sheet(item: $noteEntryData) { item in
+            .environmentObject(tabsViewModel)
+            .navigationTitle("Что надо сделать")
+            .toolbar {
+                Button {
+                    noteEntryData = NoteEntryInitialData(
+                        mode: .add,
+                        note: nil
+                    )
+                } label: {
+                    Image(systemName: "plus")
+                }
+            }
+            .sheet(
+                item: $noteEntryData,
+                onDismiss: {
+                    viewModel.send(intent: .loadTags)
+                }
+            ) { item in
                 NoteEntryView(
                     initialData: item,
                     onCancelled: {
@@ -76,16 +101,6 @@ struct NoteListView: View {
     @ViewBuilder
     private func loadedView(_ noteList: NoteList) -> some View {
         VStack {
-            
-            ScrollView(.horizontal) {
-                HStack(alignment: .top) {
-                    ForEach(noteList.tags, id: \.name) { tag in
-                        Text(tag.name)
-                    }
-                }
-            }
-            .padding(.top, 8)
-            
             if noteList.items.isEmpty {
                 VStack(spacing: 12) {
                     Spacer()
@@ -114,7 +129,6 @@ struct NoteListView: View {
                 }
             }
         }
-        .padding(.horizontal)
     }
     
     @ViewBuilder

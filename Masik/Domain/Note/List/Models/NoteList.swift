@@ -6,6 +6,6 @@
 //
 
 struct NoteList {
-    let tags: [NoteTag]
+    let tags: [NoteTag]?
     let items: [Note]
 }

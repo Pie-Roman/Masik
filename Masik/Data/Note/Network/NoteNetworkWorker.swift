@@ -42,12 +42,36 @@ class NoteNetworkWorker {
         try await URLSession.shared.data(for: request)
     }
 
-    func fetchAll() async throws -> NoteList {
-        guard let url = URL(string: baseURL) else { return NoteList(
+    func fetchAll(
+        tagName: String?
+    ) async throws -> NoteList {
+        guard var urlComponents = URLComponents(string: baseURL) else { return NoteList(
             tags: [],
             items: [],
         ) }
-        let (data, _) = try await URLSession.shared.data(from: url)
+        var queryItems: [URLQueryItem] = []
+        if let tagName {
+            queryItems.append(
+                URLQueryItem(
+                    name: "tagName",
+                    value: tagName
+                )
+            )
+        }
+
+        urlComponents.queryItems = queryItems
+        guard let url = urlComponents.url else {
+            return NoteList(
+                tags: [],
+                items: [],
+            )
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let (data, _) = try await URLSession.shared.data(for: request)
         let listDto = try decoder.decode(NoteListNetworkDto.self, from: data)
         return try noteListNetworkMapper.map(dto: listDto)
     }

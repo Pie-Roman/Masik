@@ -10,6 +10,7 @@ enum NoteListIntent {
     case launch
     
     case load
+    case loadForTag(tagName: String)
     case showLoading
     case showLoaded(NoteList)
     
@@ -19,6 +20,9 @@ enum NoteListIntent {
     
     case delete(id: String)
     case showDeleted(id: String)
-    
+
+    case loadTags
+    case showTags([NoteTag])
+
     case showError(String)
 }
