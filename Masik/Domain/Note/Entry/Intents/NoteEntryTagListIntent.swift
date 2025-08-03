@@ -10,4 +10,5 @@ enum NoteEntryTagListIntent {
     case showLoading
     case showLoaded([NoteTag])
     case showAdded(tag: NoteTag)
+    case showUpdated(tag: NoteTag)
 }

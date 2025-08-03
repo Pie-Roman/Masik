@@ -8,8 +8,6 @@ struct NoteTagEntryView: View {
     let onUpdated: ((NoteTag) -> Void)?
     let onCancelled: () -> Void
     
-    @State private var name: String = ""
-    
     @State private var red: Double = 255
     @State private var green: Double = 165
     @State private var blue: Double = 0
@@ -18,7 +16,26 @@ struct NoteTagEntryView: View {
         Color(red: red / 255, green: green / 255, blue: blue / 255)
     }
     
-    @StateObject private var viewModel: NoteTagEntryViewModel = NoteTagEntryViewModel()
+    @StateObject private var viewModel: NoteTagEntryViewModel
+
+    init(
+        initialData: NoteTagEntryInitialData,
+        onAdded: ((NoteTag) -> Void)?,
+        onUpdated: ((NoteTag) -> Void)?,
+        onCancelled: @escaping () -> Void,
+    ) {
+        self.initialData = initialData
+
+        self.onAdded = onAdded
+        self.onUpdated = onUpdated
+        self.onCancelled = onCancelled
+
+        self._viewModel = StateObject(
+            wrappedValue: NoteTagEntryViewModel(
+                initialData: initialData
+            )
+        )
+    }
 
     var body: some View {
         NavigationStack {
@@ -26,7 +43,7 @@ struct NoteTagEntryView: View {
                 VStack(spacing: 16) {
                     Group {
 
-                        TextField("Название", text: $name)
+                        TextField("Название", text: $viewModel.name)
                             .padding(.horizontal, 16)
                             .fontWeight(.semibold)
                             .frame(height: 80)
@@ -55,14 +72,11 @@ struct NoteTagEntryView: View {
                         .padding()
                         .background(Color(UIColor.systemGray5))
                         .clipShape(RoundedRectangle(cornerRadius: 16))
-                        .onChange(of: red) { updateHexColor() }
-                        .onChange(of: green) { updateHexColor() }
-                        .onChange(of: blue) { updateHexColor() }
                     }
                 }
                 .padding()
             }
-            .navigationTitle("Добавить тег")
+            .navigationTitle(navigationTitle())
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -73,14 +87,14 @@ struct NoteTagEntryView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Готово") {
-                        if !name.isEmpty {
+                        if !viewModel.name.isEmpty {
                             let r = Int(red)
                             let g = Int(green)
                             let b = Int(blue)
                             let color = String(format: "#%02X%02X%02X", r, g, b)
                             let tag = NoteTag(
                                 id: "",
-                                name: name,
+                                name: viewModel.name,
                                 color: color
                             )
 
@@ -95,7 +109,7 @@ struct NoteTagEntryView: View {
                         }
                     }
                     .fontWeight(.semibold)
-                    .disabled(name.isEmpty)
+                    .disabled(viewModel.name.isEmpty)
                 }
             }
             .onReceive(viewModel.$state) { state in
@@ -113,9 +127,13 @@ struct NoteTagEntryView: View {
             }
         }
     }
-    
-    private func updateHexColor() {
-        
+
+    private func navigationTitle() -> String {
+        if initialData.mode == .add {
+            return "Добавить тег"
+        } else {
+            return "Изменить тег"
+        }
     }
 }
 

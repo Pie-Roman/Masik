@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct NoteEntryTagListView: View {
-    
-    @State private var isTagEntryPresented = false
-    
+
+    @State private var tagEntryInitialData: NoteTagEntryInitialData? = nil
+
     @StateObject var viewModel: NoteEntryTagListViewModel
     
     var body: some View {
@@ -21,7 +21,10 @@ struct NoteEntryTagListView: View {
                     .foregroundColor(.gray)
                 Spacer()
                 Button(action: {
-                    isTagEntryPresented = true
+                    tagEntryInitialData = NoteTagEntryInitialData(
+                        mode: .add,
+                        tag: nil
+                    )
                 }) {
                     Text("Новый тег")
                         .font(.system(size: 17, weight: .semibold))
@@ -42,20 +45,21 @@ struct NoteEntryTagListView: View {
                 }
             }
         }
-        .sheet(isPresented: $isTagEntryPresented) {
+        .sheet(item: $tagEntryInitialData) { initialData in
             NoteTagEntryView(
-                initialData: NoteTagEntryInitialData(
-                    mode: .add,
-                    tag: nil
-                ),
+                initialData: initialData,
                 onAdded: { tag in
                     viewModel.send(intent: .showLoading)
                     viewModel.send(intent: .showAdded(tag: tag))
-                    isTagEntryPresented = false
+                    tagEntryInitialData = nil
                 },
-                onUpdated: nil,
+                onUpdated: { tag in
+                    viewModel.send(intent: .showLoading)
+                    viewModel.send(intent: .showUpdated(tag: tag))
+                    tagEntryInitialData = nil
+                },
                 onCancelled: {
-                    isTagEntryPresented = false
+                    tagEntryInitialData = nil
                 },
             )
         }
@@ -110,32 +114,43 @@ struct NoteEntryTagListView: View {
 
     @ViewBuilder
     private func tagListItemView(tag: NoteTag) -> some View {
-        Button(action: {
-            if viewModel.selectedTagIds.contains(tag.id) {
-                viewModel.selectedTagIds.removeAll { $0 == tag.id }
-            } else {
-                viewModel.selectedTagIds.append(tag.id)
-            }
-        }) {
-            HStack(spacing: 12) {
-                Circle()
-                    .fill(Color(hex: tag.color) ?? .gray)
-                    .frame(width: 24, height: 24)
-                    .shadow(radius: 1)
+        HStack(spacing: 12) {
+            Circle()
+                .fill(Color(hex: tag.color) ?? .gray)
+                .frame(width: 24, height: 24)
+                .shadow(radius: 1)
 
-                Text(tag.name)
-                    .font(.system(size: 17))
+            Text(tag.name)
+                .font(.system(size: 17))
 
-                Spacer()
+            Spacer()
 
-                Image(systemName: viewModel.selectedTagIds.contains(tag.id) ? "checkmark.circle.fill" : "circle")
-                    .foregroundColor(viewModel.selectedTagIds.contains(tag.id) ? .blue : .gray)
-            }
-            .padding(.horizontal, 16)
-            .frame(height: 52)
-            .background(Color(UIColor.systemGray5))
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            Image(systemName: viewModel.selectedTagIds.contains(tag.id) ? "checkmark.circle.fill" : "circle")
+                .foregroundColor(viewModel.selectedTagIds.contains(tag.id) ? .blue : .gray)
         }
-        .buttonStyle(.plain)
+        .padding(.horizontal, 16)
+        .frame(height: 52)
+        .background(Color(UIColor.systemGray5))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .highPriorityGesture(
+            LongPressGesture(minimumDuration: 0.5)
+                .onEnded { _ in
+                    tagEntryInitialData = NoteTagEntryInitialData(
+                        mode: .update,
+                        tag: tag
+                    )
+                }
+        )
+        .simultaneousGesture(
+            TapGesture()
+                .onEnded { _ in
+                    if viewModel.selectedTagIds.contains(tag.id) {
+                        viewModel.selectedTagIds.removeAll { $0 == tag.id }
+                    } else {
+                        viewModel.selectedTagIds.append(tag.id)
+                    }
+                }
+        )
     }
+
 }

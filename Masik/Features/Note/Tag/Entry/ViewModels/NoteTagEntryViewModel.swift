@@ -10,14 +10,21 @@ import SwiftUI
 final class NoteTagEntryViewModel: ObservableObject {
     
     @Published private(set) var state: NoteTagEntryState = .idle
-    
+
+    @Published var name: String
+    @Published var color: String
+
     private let processor: NoteTagEntryProcessor
     private let reducer: NoteTagEntryReducer
 
     init(
+        initialData: NoteTagEntryInitialData,
         interactor: NoteTagEntryInteractor = NoteTagEntryInteractor(),
         reducer: NoteTagEntryReducer = NoteTagEntryReducer()
     ) {
+        self.name = initialData.tag?.name ?? ""
+        self.color = initialData.tag?.color ?? ""
+
         self.processor = NoteTagEntryProcessor(interactor: interactor)
         self.reducer = reducer
         self.processor.handler = self
