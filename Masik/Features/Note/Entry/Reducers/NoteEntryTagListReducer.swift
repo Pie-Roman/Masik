@@ -19,16 +19,25 @@ class NoteEntryTagListReducer: Reducer {
             }
             return .loading(tags: tags)
             
-        case .showLoaded(let noteList):
-            return .loaded(tags: noteList)
-            
+        case .showLoaded(let tags):
+            return .loaded(tags: tags)
+
         case .showAdded(let tag):
             guard case .loading(let tags) = currentState else {
                 return currentState
             }
             let all = tags + [tag]
             return .loaded(tags: all)
-            
+
+        case .showUpdated(let tag):
+            guard case .loading(let tags) = currentState else {
+                return currentState
+            }
+            let all = tags.map {
+                $0.id == tag.id ? tag : $0
+            }
+            return .loaded(tags: all)
+
         default:
             return currentState
         }

@@ -150,7 +150,7 @@ class NoteNetworkWorker {
 
         let (data, _) = try await URLSession.shared.data(for: request)
 
-        let addedNoteTagDto = try decoder.decode(NoteTagNetworkDto.self, from: data)
-        return try noteTagNetworkMapper.map(dto: addedNoteTagDto)
+        let updatedNoteTagDto = try decoder.decode(NoteTagNetworkDto.self, from: data)
+        return try noteTagNetworkMapper.map(dto: updatedNoteTagDto)
     }
 }

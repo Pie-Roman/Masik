@@ -68,15 +68,6 @@ final class NoteListProcessor: Processor {
                 }
             }
 
-        case .loadTags:
-            Task {
-                do {
-                    let tags = try await interactor.loadTags()
-                    handler?.handle(intent: .showTags(tags))
-                } catch {
-                }
-            }
-
         default:
             handler?.handle(intent: intent)
         }

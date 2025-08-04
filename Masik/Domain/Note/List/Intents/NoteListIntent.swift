@@ -21,8 +21,5 @@ enum NoteListIntent {
     case delete(id: String)
     case showDeleted(id: String)
 
-    case loadTags
-    case showTags([NoteTag])
-
     case showError(String)
 }

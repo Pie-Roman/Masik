@@ -45,10 +45,6 @@ extension NoteListViewModel: NoteListHandler {
             if case .loaded(let noteList) = newState, let newTags = noteList.tags {
                 self.noteListTabsViewModel.tags = newTags
             }
-
-            if case .showTags(let tags) = intent {
-                self.noteListTabsViewModel.tags = tags
-            }
         }
     }
 }

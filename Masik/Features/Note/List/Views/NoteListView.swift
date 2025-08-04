@@ -58,7 +58,7 @@ struct NoteListView: View {
             .sheet(
                 item: $noteEntryData,
                 onDismiss: {
-                    viewModel.send(intent: .loadTags)
+                    viewModel.send(intent: .load)
                 }
             ) { item in
                 NoteEntryView(
