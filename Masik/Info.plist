@@ -15,5 +15,7 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Приложению нужен доступ к календарю, чтобы отображать события в списке заметок</string>
 </dict>
 </plist>

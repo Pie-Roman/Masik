@@ -7,17 +7,34 @@
 
 class NoteListInteractor {
 
-    private let worker = NoteNetworkWorker()
+    private let networkWorker = NoteNetworkWorker()
+    private let systemWorker = NoteSystemWorker()
+    
+    func requestSystemEventsPermission(completion: @escaping (Bool) -> Void) {
+        systemWorker.requestAccess(completion: completion)
+    }
 
-    func loadNoteList() async throws -> NoteList {
-        try await worker.fetchAll()
+    func loadNoteList(
+        withSystemNotes: Bool
+    ) async throws -> NoteList {
+        let networkNotes = try await networkWorker.fetchAll()
+        
+        if withSystemNotes {
+            let systemNotes: NoteList = try await systemWorker.fetchAll()
+            return NoteList(
+                tags: networkNotes.tags + systemNotes.tags,
+                items: networkNotes.items + systemNotes.items
+            )
+        } else {
+            return networkNotes
+        }
     }
 
     func addNote(noteBody: NoteBody) async throws -> Note {
-        try await worker.add(noteBody: noteBody)
+        try await networkWorker.add(noteBody: noteBody)
     }
 
     func deleteNote(id: String) async throws {
-        try await worker.delete(id: id)
+        try await networkWorker.delete(id: id)
     }
 }

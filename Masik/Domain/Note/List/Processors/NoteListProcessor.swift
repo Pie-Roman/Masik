@@ -24,12 +24,16 @@ final class NoteListProcessor: Processor {
             
         case .load:
             handler?.handle(intent: .showLoading)
-            Task {
-                do {
-                    let noteList = try await interactor.loadNoteList()
-                    handler?.handle(intent: .showLoaded(noteList))
-                } catch {
-                    handler?.handle(intent: .showError(error.localizedDescription))
+            
+            interactor.requestSystemEventsPermission { [weak self] withSystemNotes in
+                guard let self else { return }
+                Task {
+                    do {
+                        let noteList = try await self.interactor.loadNoteList(withSystemNotes: withSystemNotes)
+                        self.handler?.handle(intent: .showLoaded(noteList))
+                    } catch {
+                        self.handler?.handle(intent: .showError(error.localizedDescription))
+                    }
                 }
             }
             
