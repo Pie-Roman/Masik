@@ -28,7 +28,7 @@ class NoteListReducer: Reducer {
             guard case .loading(let noteList) = currentState else {
                 return currentState
             }
-            let all = noteList.items + [note]
+            let all = [note] + noteList.items
             return .loaded(NoteList(tags: noteList.tags, items: all))
             
         case .showUpdated(let note):
