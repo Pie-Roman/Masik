@@ -40,6 +40,6 @@ class NoteListInteractor {
     }
 
     func loadTags() async throws -> [NoteTag] {
-        try await worker.fetchAllTags()
+        try await networkWorker.fetchAllTags()
     }
 }

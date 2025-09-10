@@ -12,6 +12,7 @@ class NoteSystemMapper {
     func map(event: EKEvent) -> Note {
         let id = "iOS-\(event.eventIdentifier ?? UUID().uuidString)"
         let tag = NoteTag(
+            id: event.calendar.calendarIdentifier,
             name: event.calendar.title,
             color: event.calendar.cgColor?.toHex() ?? "#999999"
         )
