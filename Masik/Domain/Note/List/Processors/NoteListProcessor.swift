@@ -22,18 +22,27 @@ final class NoteListProcessor: Processor {
     func process(intent: NoteListIntent) {
         switch intent {
             
-        case .load:
-            handler?.handle(intent: .showLoading)
-            
+        case .launch:
             interactor.requestSystemEventsPermission { [weak self] withSystemNotes in
                 guard let self else { return }
                 Task {
                     do {
-                        let noteList = try await self.interactor.loadNoteList(withSystemNotes: withSystemNotes)
-                        self.handler?.handle(intent: .showLoaded(noteList))
+                        try await self.interactor.launch(withSystemNotes: withSystemNotes)
+                        self.process(intent: .load)
                     } catch {
-                        self.handler?.handle(intent: .showError(error.localizedDescription))
+                        self.process(intent: .load)
                     }
+                }
+            }
+            
+        case .load:
+            handler?.handle(intent: .showLoading)
+            Task {
+                do {
+                    let noteList = try await self.interactor.loadNoteList()
+                    self.handler?.handle(intent: .showLoaded(noteList))
+                } catch {
+                    self.handler?.handle(intent: .showError(error.localizedDescription))
                 }
             }
             

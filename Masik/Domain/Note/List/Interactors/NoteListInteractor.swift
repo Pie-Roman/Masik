@@ -13,21 +13,18 @@ class NoteListInteractor {
     func requestSystemEventsPermission(completion: @escaping (Bool) -> Void) {
         systemWorker.requestAccess(completion: completion)
     }
-
-    func loadNoteList(
+    
+    func launch(
         withSystemNotes: Bool
-    ) async throws -> NoteList {
-        let networkNotes = try await networkWorker.fetchAll()
-        
+    ) async throws {
         if withSystemNotes {
-            let systemNotes: NoteList = try await systemWorker.fetchAll()
-            return NoteList(
-                tags: networkNotes.tags + systemNotes.tags,
-                items: networkNotes.items + systemNotes.items
-            )
-        } else {
-            return networkNotes
+            let systemNotes: [Note] = try await systemWorker.fetchAll()
+            try await networkWorker.launch(systemNotes: systemNotes)
         }
+    }
+
+    func loadNoteList() async throws -> NoteList {
+        try await networkWorker.fetchAll()
     }
 
     func addNote(noteBody: NoteBody) async throws -> Note {

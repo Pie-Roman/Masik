@@ -11,7 +11,7 @@ import EventKit
 class NoteSystemWorker {
     
     private let store = EKEventStore()
-    private let noteListSystemMapper = NoteListSystemMapper()
+    private let noteSystemMapper = NoteSystemMapper()
     
     func requestAccess(completion: @escaping (Bool) -> Void) {
         if #available(iOS 17, *) {
@@ -25,12 +25,12 @@ class NoteSystemWorker {
         }
     }
     
-    func fetchAll() async throws -> NoteList {
+    func fetchAll() async throws -> [Note] {
         let endDate = Date()
         let startDate = Calendar.current.date(byAdding: .day, value: -7, to: endDate)!
         let events = fetchEvents(from: startDate, to: endDate)
         
-        return noteListSystemMapper.map(events: events)
+        return events.map { noteSystemMapper.map(event: $0) }
     }
     
     private func fetchEvents(from startDate: Date, to endDate: Date) -> [EKEvent] {

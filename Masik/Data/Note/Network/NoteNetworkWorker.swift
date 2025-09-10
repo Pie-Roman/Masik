@@ -28,6 +28,19 @@ class NoteNetworkWorker {
     private let noteNetworkMapper = NoteNetworkMapper()
     private let noteBodyNetworkMapper = NoteBodyNetworkMapper()
     private let noteTagNetworkMapper = NoteTagNetworkMapper()
+    
+    func launch(systemNotes: [Note]) async throws {
+        guard let url = URL(string: "\(baseURL)/launch") else { throw URLError(.badURL) }
+        let systemNotesDto = systemNotes.map { noteNetworkMapper.map(model: $0) }
+        let launchDto = NoteListLaunchNetworkDto(systemNotes: systemNotesDto)
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try? encoder.encode(launchDto)
+
+        try await URLSession.shared.data(for: request)
+    }
 
     func fetchAll() async throws -> NoteList {
         guard let url = URL(string: baseURL) else { return NoteList(

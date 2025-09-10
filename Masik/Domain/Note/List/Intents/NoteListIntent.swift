@@ -7,6 +7,8 @@
 
 enum NoteListIntent {
     
+    case launch
+    
     case load
     case showLoading
     case showLoaded(NoteList)

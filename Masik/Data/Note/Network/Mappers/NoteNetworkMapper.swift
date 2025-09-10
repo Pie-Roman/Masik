@@ -22,4 +22,14 @@ class NoteNetworkMapper {
             body: body,
         )
     }
+    
+    func map(model: Note) -> NoteNetworkDto {
+        let id = model.id
+        let body = noteBodyNetworkMapper.map(model: model.body)
+        
+        return NoteNetworkDto(
+            id: id,
+            body: body
+        )
+    }
 }

@@ -60,7 +60,7 @@ struct NoteListView: View {
     private func idleView() -> some View {
         Color.clear
             .onAppear {
-                viewModel.send(intent: .load)
+                viewModel.send(intent: .launch)
             }
     }
     
