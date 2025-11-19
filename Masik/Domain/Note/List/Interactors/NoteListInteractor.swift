@@ -38,8 +38,4 @@ class NoteListInteractor {
     func deleteNote(id: String) async throws {
         try await networkWorker.delete(id: id)
     }
-
-    func loadTags() async throws -> [NoteTag] {
-        try await networkWorker.fetchAllTags()
-    }
 }
