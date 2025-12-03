@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		37F4EEC62E032592008DAD1F /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 37F4EEC52E032592008DAD1F /* .gitignore */; };
+		680AF1EA2EDFABF000E34C6D /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 680AF1E92EDFABF000E34C6D /* Lottie */; };
+		68C3DE9A2EDFB45B001345E4 /* DotLottie in Frameworks */ = {isa = PBXBuildFile; productRef = 68C3DE992EDFB45B001345E4 /* DotLottie */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +43,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				680AF1EA2EDFABF000E34C6D /* Lottie in Frameworks */,
+				68C3DE9A2EDFB45B001345E4 /* DotLottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +88,8 @@
 			);
 			name = Masik;
 			packageProductDependencies = (
+				680AF1E92EDFABF000E34C6D /* Lottie */,
+				68C3DE992EDFB45B001345E4 /* DotLottie */,
 			);
 			productName = Masik;
 			productReference = 68B21BD92DF5E41500F791DA /* Masik.app */;
@@ -113,6 +119,10 @@
 			);
 			mainGroup = 68B21BD02DF5E41500F791DA;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				680AF1E82EDFABF000E34C6D /* XCRemoteSwiftPackageReference "lottie-ios" */,
+				68C3DE982EDFB45B001345E4 /* XCRemoteSwiftPackageReference "dotlottie-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 68B21BDA2DF5E41500F791DA /* Products */;
 			projectDirPath = "";
@@ -269,6 +279,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Masik/Masik.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7JCTFR9C8T;
@@ -299,6 +310,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Masik/Masik.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7JCTFR9C8T;
@@ -346,6 +358,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		680AF1E82EDFABF000E34C6D /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
+			requirement = {
+				kind = exactVersion;
+				version = 4.4.0;
+			};
+		};
+		68C3DE982EDFB45B001345E4 /* XCRemoteSwiftPackageReference "dotlottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LottieFiles/dotlottie-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.11.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		680AF1E92EDFABF000E34C6D /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 680AF1E82EDFABF000E34C6D /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
+		68C3DE992EDFB45B001345E4 /* DotLottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 68C3DE982EDFB45B001345E4 /* XCRemoteSwiftPackageReference "dotlottie-ios" */;
+			productName = DotLottie;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 68B21BD12DF5E41500F791DA /* Project object */;
 }

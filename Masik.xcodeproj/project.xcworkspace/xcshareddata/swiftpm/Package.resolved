@@ -1,0 +1,24 @@
+{
+  "originHash" : "91025cc00fae187940adb1c4b2a115903ee601162c276057b6c311344882f8ad",
+  "pins" : [
+    {
+      "identity" : "dotlottie-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LottieFiles/dotlottie-ios",
+      "state" : {
+        "revision" : "4213e7298eb94b81ce08c226302759c34ce59366",
+        "version" : "0.11.1"
+      }
+    },
+    {
+      "identity" : "lottie-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/airbnb/lottie-ios.git",
+      "state" : {
+        "revision" : "f522990668c2f9132323a2e68d924c7dcb9130b4",
+        "version" : "4.4.0"
+      }
+    }
+  ],
+  "version" : 3
+}
